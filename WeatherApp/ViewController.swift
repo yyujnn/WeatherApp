@@ -89,6 +89,11 @@ class ViewController: UIViewController {
         }.resume()
     }
     
+    // 서버에서 현재 날씨 데이터를 불러오는 메서드.
+    private func fetchCurrentWeatherData() {
+        
+    }
+    
     private func configureUI() {
         view.backgroundColor = .black
         [
