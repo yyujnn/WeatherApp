@@ -53,7 +53,7 @@ class ViewController: UIViewController {
     private let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
-        imageView.backgroundColor = .gray
+        imageView.backgroundColor = .black
         return imageView
     }()
     
@@ -61,7 +61,33 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         configureUI()
     }
-
+    
+    // 서버 데이터 불러오는 메서드
+    /// 제네릭: T에는 Decodable을 준수하는 어떤 타입이든 들어올 수 있다.
+    /// @escaping: 메서드가 끝이 나더라도 탈출하여 언제든지 실행되는 클로저
+    private func fetchData<T: Decodable>(url: URL, completion: @escaping (T?) -> Void) {
+        let session = URLSession(configuration: .default)
+        session.dataTask(with: URLRequest(url: url)){data, response, error in
+            guard let data, error == nil else {
+                print("데이터 로드 실패")
+                completion(nil)
+                return
+            }
+            // http status code 성공범위는 200번대.
+            let successRange = 200..<399
+            if let response = response as? HTTPURLResponse, successRange.contains(response.statusCode) {
+                guard let decodeData = try? JSONDecoder().decode(T.self, from: data) else {
+                    print("JSON 디코딩 실패")
+                    completion(nil)
+                    return
+                }
+                completion(decodeData)
+            } else {
+                print("응답 오류")
+                completion(nil)
+            }
+        }.resume()
+    }
     
     private func configureUI() {
         view.backgroundColor = .black
