@@ -66,6 +66,16 @@ class ViewController: UIViewController {
         return imageView
     }()
     
+    private let tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.backgroundColor = .black
+        // delegate: tableView의 여러가지 속성 세팅을 이 ViewController에서 대신 세팅하는 코드 작성해주겠다.
+        tableView.delegate = self
+        // dataSource: 테이블 뷰 안에 들어갈 데이터를 이 ViewController에서 세팅해주겠다.
+        tableView.dataSource = self
+        return tableView
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
@@ -168,4 +178,26 @@ class ViewController: UIViewController {
         }
     }
 }
+
+extension ViewController: UITableViewDelegate {
+    // 테이블 뷰 셀 높이 크기 지정
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        <#code#>
+    }
+}
+
+extension ViewController: UITableViewDataSource {
+    // 테이블 뷰의 indexPath마다 테이블 뷰 셀을 지정.
+    // indexPath: 테이블 뷰의 셀과 섹션을 의미
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        <#code#>
+    }
+    
+    // 테이블 뷰 섹션에 행이 몇개 들어가는가.
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        <#code#>
+    }
+    
+}
+
 
