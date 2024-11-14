@@ -52,8 +52,9 @@ final class TableViewCell: UITableViewCell {
         }
     }
     
-    public func configureCell() {
-        
+    public func configureCell(forecastWeather: ForecastWeather) {
+        dtTxtLabel.text = "\(forecastWeather.dtTxt)"
+        tempLable.text = "\(forecastWeather.main.temp)°C"
     }
     
     // 인터페이스 빌더를 통해 셀을 초기화 할 때 사용하는 코드
