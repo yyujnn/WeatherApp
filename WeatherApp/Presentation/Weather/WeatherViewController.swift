@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  WeatherViewController.swift
 //  WeatherApp
 //
 //  Created by 정유진 on 9/9/24.
@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class ViewController: UIViewController {
+class WeatherViewController: UIViewController {
 
     private var dataSource = [ForecastWeather]()
     
@@ -211,19 +211,19 @@ class ViewController: UIViewController {
         tableView.snp.makeConstraints {
             $0.top.equalTo(imageView.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview().inset(20)
-            $0.bottom.equalToSuperview().inset(50)
+            $0.bottom.equalToSuperview().inset(100)
         }
     }
 }
 
-extension ViewController: UITableViewDelegate {
+extension WeatherViewController: UITableViewDelegate {
     // 테이블 뷰 셀 높이 크기 지정
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 40
     }
 }
 
-extension ViewController: UITableViewDataSource {
+extension WeatherViewController: UITableViewDataSource {
     // 테이블 뷰의 indexPath마다 테이블 뷰 셀을 지정.
     // indexPath: 테이블 뷰의 셀과 섹션을 의미
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -236,5 +236,3 @@ extension ViewController: UITableViewDataSource {
         return dataSource.count
     }
 }
-
-
