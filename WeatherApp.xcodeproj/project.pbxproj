@@ -23,6 +23,8 @@
 		F3742EE72CAFCE4E00E062E0 /* ForecastWeatherResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3742EE62CAFCE4E00E062E0 /* ForecastWeatherResult.swift */; };
 		F3742EE92CAFCE6000E062E0 /* TableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3742EE82CAFCE6000E062E0 /* TableViewCell.swift */; };
 		F3742EEC2CAFD26800E062E0 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = F3742EEB2CAFD26800E062E0 /* SnapKit */; };
+		F3AB5A472D02E7D700A88985 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = F3AB5A462D02E7D700A88985 /* Lottie */; };
+		F3AB5A492D02ECC200A88985 /* sunnyAnimation.json in Resources */ = {isa = PBXBuildFile; fileRef = F3AB5A482D02ECC200A88985 /* sunnyAnimation.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -55,6 +57,7 @@
 		F3742EE42CAFCE3100E062E0 /* CurrentWeatherResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentWeatherResult.swift; sourceTree = "<group>"; };
 		F3742EE62CAFCE4E00E062E0 /* ForecastWeatherResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastWeatherResult.swift; sourceTree = "<group>"; };
 		F3742EE82CAFCE6000E062E0 /* TableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCell.swift; sourceTree = "<group>"; };
+		F3AB5A482D02ECC200A88985 /* sunnyAnimation.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = sunnyAnimation.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +67,7 @@
 			files = (
 				F3742EEC2CAFD26800E062E0 /* SnapKit in Frameworks */,
 				F36673EC2CEB2848008C2D42 /* Alamofire in Frameworks */,
+				F3AB5A472D02E7D700A88985 /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -132,6 +136,7 @@
 				F36673F42CEB2EB5008C2D42 /* Fonts */,
 				F359DD3F2C8EEBEC00F51E40 /* LaunchScreen.storyboard */,
 				F359DD3D2C8EEBEC00F51E40 /* Assets.xcassets */,
+				F3AB5A482D02ECC200A88985 /* sunnyAnimation.json */,
 				F359DD422C8EEBEC00F51E40 /* Info.plist */,
 			);
 			path = Resource;
@@ -192,6 +197,7 @@
 			packageProductDependencies = (
 				F3742EEB2CAFD26800E062E0 /* SnapKit */,
 				F36673EB2CEB2848008C2D42 /* Alamofire */,
+				F3AB5A462D02E7D700A88985 /* Lottie */,
 			);
 			productName = WeatherApp;
 			productReference = F359DD312C8EEBE900F51E40 /* WeatherApp.app */;
@@ -224,6 +230,7 @@
 			packageReferences = (
 				F3742EEA2CAFD26800E062E0 /* XCRemoteSwiftPackageReference "SnapKit" */,
 				F36673EA2CEB2848008C2D42 /* XCRemoteSwiftPackageReference "Alamofire" */,
+				F3AB5A452D02E7D700A88985 /* XCRemoteSwiftPackageReference "lottie-ios" */,
 			);
 			productRefGroup = F359DD322C8EEBE900F51E40 /* Products */;
 			projectDirPath = "";
@@ -244,6 +251,7 @@
 				F36674202CF06256008C2D42 /* Gabarito-Bold.ttf in Resources */,
 				F36674222CF0625A008C2D42 /* Gabarito-Medium.ttf in Resources */,
 				F359DD412C8EEBEC00F51E40 /* Base in Resources */,
+				F3AB5A492D02ECC200A88985 /* sunnyAnimation.json in Resources */,
 				F36674232CF0625D008C2D42 /* Gabarito-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -491,6 +499,14 @@
 				minimumVersion = 5.7.1;
 			};
 		};
+		F3AB5A452D02E7D700A88985 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.5.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -503,6 +519,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F3742EEA2CAFD26800E062E0 /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
+		};
+		F3AB5A462D02E7D700A88985 /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F3AB5A452D02E7D700A88985 /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

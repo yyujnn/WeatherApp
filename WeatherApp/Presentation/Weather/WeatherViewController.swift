@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import Lottie
 
 class WeatherViewController: UIViewController {
 
@@ -30,10 +31,18 @@ class WeatherViewController: UIViewController {
     }()
     
     private let tempLabel: UILabel = {
-       let label = UILabel()
+        let label = UILabel()
         label.textColor = .appBlack
-        label.text = "20°"
-        label.font = Gabarito.semibold.of(size: 100)
+        label.text = "20"
+        label.font = Gabarito.medium.of(size: 100)
+        return label
+    }()
+    
+    private let degreeLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .appBlack
+        label.text = "°"
+        label.font = Gabarito.medium.of(size: 100)
         return label
     }()
     
@@ -69,6 +78,9 @@ class WeatherViewController: UIViewController {
         return stackView
     }()
     
+    private let leftAnimationView = LottieAnimationView(name: "sunnyAnimation")
+    private let rightAnimationView = LottieAnimationView(name: "sunnyAnimation")
+    
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.backgroundColor = .white
@@ -84,14 +96,23 @@ class WeatherViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
-        for familyName in UIFont.familyNames {
-            print("Family: \(familyName)")
-            for fontName in UIFont.fontNames(forFamilyName: familyName) {
-                print("  Font: \(fontName)")
-            }
-        }
+        
+        setupLottieAnimations()
 //        fetchCurrentWeatherData()
 //        fetchForecastData()
+    }
+    
+    private func setupLottieAnimations() {
+        leftAnimationView.contentMode = .scaleAspectFit
+        leftAnimationView.loopMode = .loop
+        leftAnimationView.animationSpeed = 0.5
+        
+        rightAnimationView.contentMode = .scaleAspectFit
+        rightAnimationView.loopMode = .loop
+        rightAnimationView.animationSpeed = 0.5
+        
+        leftAnimationView.play()
+        rightAnimationView.play()
     }
     
     // 서버 데이터 불러오는 메서드
@@ -135,12 +156,10 @@ class WeatherViewController: UIViewController {
             guard let self, let result else { return }
             // UI 작업은 메인 쓰레드에서 작업
             DispatchQueue.main.async {
-                self.tempLabel.text = "\(Int(result.main.temp))°"
+                self.tempLabel.text = "\(Int(result.main.temp))"
                 self.tempMinLabel.text = "L: \(Int(result.main.tempMin))°"
                 self.tempMaxLabel.text = "H: \(Int(result.main.tempMax))°"
             }
-            
-            guard let imageURL = URL(string: "https://openweathermap.org/img/wn/\(result.weather[0].icon)@2x.png") else { return }
         }
     }
     
@@ -174,8 +193,11 @@ class WeatherViewController: UIViewController {
         [
             titleLabel,
             tempLabel,
+            degreeLabel,
             stateLabel,
             tempStackView,
+            leftAnimationView,
+            rightAnimationView,
             tableView
         ].forEach{ view.addSubview($0) }
         
@@ -194,6 +216,11 @@ class WeatherViewController: UIViewController {
             $0.top.equalTo(titleLabel.snp.bottom).offset(14)
         }
         
+        degreeLabel.snp.makeConstraints {
+            $0.centerY.equalTo(tempLabel.snp.centerY)
+            $0.left.equalTo(tempLabel.snp.right).offset(4)
+        }
+        
         stateLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.top.equalTo(tempLabel.snp.bottom).offset(10)
@@ -204,8 +231,20 @@ class WeatherViewController: UIViewController {
             $0.top.equalTo(stateLabel.snp.bottom).offset(12)
         }
         
+        leftAnimationView.snp.makeConstraints {
+            $0.top.equalTo(titleLabel)
+            $0.leading.equalToSuperview().offset(-20)
+            $0.width.height.equalTo(120)
+        }
+        
+        rightAnimationView.snp.makeConstraints {
+            $0.top.equalTo(stateLabel)
+            $0.trailing.equalToSuperview().offset(20)
+            $0.width.height.equalTo(120)
+        }
+        
         tableView.snp.makeConstraints {
-            $0.top.equalTo(tempStackView.snp.bottom).offset(30)
+            $0.top.equalTo(rightAnimationView.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview().inset(20)
             $0.bottom.equalToSuperview().inset(100)
         }
@@ -232,6 +271,6 @@ extension WeatherViewController: UITableViewDataSource {
         return dataSource.count
     }
 }
-#Preview{
-    WeatherViewController()
-}
+//#Preview{
+//    WeatherViewController()
+//}
