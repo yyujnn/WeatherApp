@@ -14,6 +14,11 @@
 		F36673E92CEB24F2008C2D42 /* TabBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F36673E82CEB24F2008C2D42 /* TabBarViewController.swift */; };
 		F36673EC2CEB2848008C2D42 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = F36673EB2CEB2848008C2D42 /* Alamofire */; };
 		F36673EF2CEB2947008C2D42 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F36673EE2CEB2947008C2D42 /* SearchViewController.swift */; };
+		F36673FF2CEB3024008C2D42 /* Font.swift in Sources */ = {isa = PBXBuildFile; fileRef = F36673FE2CEB3024008C2D42 /* Font.swift */; };
+		F36674202CF06256008C2D42 /* Gabarito-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F366741D2CF061EA008C2D42 /* Gabarito-Bold.ttf */; };
+		F36674212CF06258008C2D42 /* Gabarito-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F36674192CF061E9008C2D42 /* Gabarito-SemiBold.ttf */; };
+		F36674222CF0625A008C2D42 /* Gabarito-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F366741E2CF061F8008C2D42 /* Gabarito-Medium.ttf */; };
+		F36674232CF0625D008C2D42 /* Gabarito-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F366741C2CF061EA008C2D42 /* Gabarito-Regular.ttf */; };
 		F3742EE52CAFCE3100E062E0 /* CurrentWeatherResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3742EE42CAFCE3100E062E0 /* CurrentWeatherResult.swift */; };
 		F3742EE72CAFCE4E00E062E0 /* ForecastWeatherResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3742EE62CAFCE4E00E062E0 /* ForecastWeatherResult.swift */; };
 		F3742EE92CAFCE6000E062E0 /* TableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3742EE82CAFCE6000E062E0 /* TableViewCell.swift */; };
@@ -42,6 +47,11 @@
 		F359DD422C8EEBEC00F51E40 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F36673E82CEB24F2008C2D42 /* TabBarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarViewController.swift; sourceTree = "<group>"; };
 		F36673EE2CEB2947008C2D42 /* SearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
+		F36673FE2CEB3024008C2D42 /* Font.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Font.swift; sourceTree = "<group>"; };
+		F36674192CF061E9008C2D42 /* Gabarito-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gabarito-SemiBold.ttf"; sourceTree = "<group>"; };
+		F366741C2CF061EA008C2D42 /* Gabarito-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gabarito-Regular.ttf"; sourceTree = "<group>"; };
+		F366741D2CF061EA008C2D42 /* Gabarito-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gabarito-Bold.ttf"; sourceTree = "<group>"; };
+		F366741E2CF061F8008C2D42 /* Gabarito-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gabarito-Medium.ttf"; sourceTree = "<group>"; };
 		F3742EE42CAFCE3100E062E0 /* CurrentWeatherResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentWeatherResult.swift; sourceTree = "<group>"; };
 		F3742EE62CAFCE4E00E062E0 /* ForecastWeatherResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastWeatherResult.swift; sourceTree = "<group>"; };
 		F3742EE82CAFCE6000E062E0 /* TableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCell.swift; sourceTree = "<group>"; };
@@ -83,6 +93,7 @@
 				F36673E62CE5F32D008C2D42 /* Resource */,
 				F36673E32CE5F2AD008C2D42 /* Model */,
 				F36673E42CE5F2D1008C2D42 /* Presentation */,
+				F36673FD2CEB2FEC008C2D42 /* Utills */,
 			);
 			path = WeatherApp;
 			sourceTree = "<group>";
@@ -118,6 +129,7 @@
 		F36673E62CE5F32D008C2D42 /* Resource */ = {
 			isa = PBXGroup;
 			children = (
+				F36673F42CEB2EB5008C2D42 /* Fonts */,
 				F359DD3F2C8EEBEC00F51E40 /* LaunchScreen.storyboard */,
 				F359DD3D2C8EEBEC00F51E40 /* Assets.xcassets */,
 				F359DD422C8EEBEC00F51E40 /* Info.plist */,
@@ -139,6 +151,25 @@
 				F36673EE2CEB2947008C2D42 /* SearchViewController.swift */,
 			);
 			path = Search;
+			sourceTree = "<group>";
+		};
+		F36673F42CEB2EB5008C2D42 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				F366741D2CF061EA008C2D42 /* Gabarito-Bold.ttf */,
+				F36674192CF061E9008C2D42 /* Gabarito-SemiBold.ttf */,
+				F366741E2CF061F8008C2D42 /* Gabarito-Medium.ttf */,
+				F366741C2CF061EA008C2D42 /* Gabarito-Regular.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		F36673FD2CEB2FEC008C2D42 /* Utills */ = {
+			isa = PBXGroup;
+			children = (
+				F36673FE2CEB3024008C2D42 /* Font.swift */,
+			);
+			path = Utills;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -209,7 +240,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				F359DD3E2C8EEBEC00F51E40 /* Assets.xcassets in Resources */,
+				F36674212CF06258008C2D42 /* Gabarito-SemiBold.ttf in Resources */,
+				F36674202CF06256008C2D42 /* Gabarito-Bold.ttf in Resources */,
+				F36674222CF0625A008C2D42 /* Gabarito-Medium.ttf in Resources */,
 				F359DD412C8EEBEC00F51E40 /* Base in Resources */,
+				F36674232CF0625D008C2D42 /* Gabarito-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -224,6 +259,7 @@
 				F36673EF2CEB2947008C2D42 /* SearchViewController.swift in Sources */,
 				F359DD392C8EEBE900F51E40 /* WeatherViewController.swift in Sources */,
 				F359DD352C8EEBE900F51E40 /* AppDelegate.swift in Sources */,
+				F36673FF2CEB3024008C2D42 /* Font.swift in Sources */,
 				F3742EE92CAFCE6000E062E0 /* TableViewCell.swift in Sources */,
 				F36673E92CEB24F2008C2D42 /* TabBarViewController.swift in Sources */,
 				F3742EE52CAFCE3100E062E0 /* CurrentWeatherResult.swift in Sources */,

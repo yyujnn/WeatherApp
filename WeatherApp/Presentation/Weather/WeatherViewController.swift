@@ -23,33 +23,41 @@ class WeatherViewController: UIViewController {
     
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "서울특별시"
-        label.textColor = .white
-        label.font = .boldSystemFont(ofSize: 30)
+        label.text = "Seoul"
+        label.textColor = .appBlack
+        label.font = Gabarito.regular.of(size: 30)
         return label
     }()
     
     private let tempLabel: UILabel = {
        let label = UILabel()
-        label.textColor = .white
-        label.text = "20도"
-        label.font = .boldSystemFont(ofSize: 50)
+        label.textColor = .appBlack
+        label.text = "20°"
+        label.font = Gabarito.semibold.of(size: 100)
+        return label
+    }()
+    
+    private let stateLabel: UILabel = {
+       let label = UILabel()
+        label.textColor = .darkGray
+        label.text = "Sunny"
+        label.font = Gabarito.regular.of(size: 26)
         return label
     }()
     
     private let tempMinLabel: UILabel = {
        let label = UILabel()
-        label.textColor = .white
-        label.text = "20도"
-        label.font = .boldSystemFont(ofSize: 20)
+        label.textColor = .darkGray
+        label.text = "L: 20°"
+        label.font = Gabarito.semibold.of(size: 20)
         return label
     }()
     
     private let tempMaxLabel: UILabel = {
        let label = UILabel()
-        label.textColor = .white
-        label.text = "20도"
-        label.font = .boldSystemFont(ofSize: 20)
+        label.textColor = .darkGray
+        label.text = "H:20°"
+        label.font = Gabarito.semibold.of(size: 20)
         return label
     }()
     
@@ -61,16 +69,9 @@ class WeatherViewController: UIViewController {
         return stackView
     }()
     
-    private let imageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
-        imageView.backgroundColor = .black
-        return imageView
-    }()
-    
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
-        tableView.backgroundColor = .black
+        tableView.backgroundColor = .white
         // delegate: tableView의 여러가지 속성 세팅을 이 ViewController에서 대신 세팅하는 코드 작성해주겠다.
         tableView.delegate = self
         // dataSource: 테이블 뷰 안에 들어갈 데이터를 이 ViewController에서 세팅해주겠다.
@@ -83,8 +84,14 @@ class WeatherViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
-        fetchCurrentWeatherData()
-        fetchForecastData()
+        for familyName in UIFont.familyNames {
+            print("Family: \(familyName)")
+            for fontName in UIFont.fontNames(forFamilyName: familyName) {
+                print("  Font: \(fontName)")
+            }
+        }
+//        fetchCurrentWeatherData()
+//        fetchForecastData()
     }
     
     // 서버 데이터 불러오는 메서드
@@ -128,22 +135,12 @@ class WeatherViewController: UIViewController {
             guard let self, let result else { return }
             // UI 작업은 메인 쓰레드에서 작업
             DispatchQueue.main.async {
-                self.tempLabel.text = "\(Int(result.main.temp))°C"
-                self.tempMinLabel.text = "최소: \(Int(result.main.tempMin))°C"
-                self.tempMaxLabel.text = "최대: \(Int(result.main.tempMax))°C"
+                self.tempLabel.text = "\(Int(result.main.temp))°"
+                self.tempMinLabel.text = "L: \(Int(result.main.tempMin))°"
+                self.tempMaxLabel.text = "H: \(Int(result.main.tempMax))°"
             }
             
             guard let imageURL = URL(string: "https://openweathermap.org/img/wn/\(result.weather[0].icon)@2x.png") else { return }
-            
-            // image 로드하는 작업은 백그라운드 쓰레드 작업
-            if let data = try? Data(contentsOf: imageURL) {
-                if let image = UIImage(data: data) {
-                    // 이미지뷰에 이미지 그리는 것은 UI 작업이기 때문에 다시 메인 쓰레드
-                    DispatchQueue.main.async {
-                        self.imageView.image = image
-                    }
-                }
-            }
         }
     }
     
@@ -173,43 +170,42 @@ class WeatherViewController: UIViewController {
     }
     
     private func configureUI() {
-        view.backgroundColor = .black
+        view.backgroundColor = .sunnyBackground
         [
             titleLabel,
             tempLabel,
+            stateLabel,
             tempStackView,
-            imageView,
             tableView
         ].forEach{ view.addSubview($0) }
         
         [
-            tempMinLabel,
-            tempMaxLabel
+            tempMaxLabel,
+            tempMinLabel
         ].forEach{ tempStackView.addArrangedSubview($0) }
         
         titleLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().offset(120)
+            $0.top.equalToSuperview().offset(100)
         }
         
         tempLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalTo(titleLabel.snp.bottom).offset(10)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(14)
         }
         
-        tempStackView.snp.makeConstraints {
+        stateLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.top.equalTo(tempLabel.snp.bottom).offset(10)
         }
         
-        imageView.snp.makeConstraints {
+        tempStackView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.width.height.equalTo(160)
-            $0.top.equalTo(tempStackView.snp.bottom).offset(20)
+            $0.top.equalTo(stateLabel.snp.bottom).offset(12)
         }
         
         tableView.snp.makeConstraints {
-            $0.top.equalTo(imageView.snp.bottom).offset(20)
+            $0.top.equalTo(tempStackView.snp.bottom).offset(30)
             $0.leading.trailing.equalToSuperview().inset(20)
             $0.bottom.equalToSuperview().inset(100)
         }
@@ -235,4 +231,7 @@ extension WeatherViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return dataSource.count
     }
+}
+#Preview{
+    WeatherViewController()
 }
