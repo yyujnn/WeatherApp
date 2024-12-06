@@ -25,6 +25,11 @@
 		F3742EEC2CAFD26800E062E0 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = F3742EEB2CAFD26800E062E0 /* SnapKit */; };
 		F3AB5A472D02E7D700A88985 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = F3AB5A462D02E7D700A88985 /* Lottie */; };
 		F3AB5A492D02ECC200A88985 /* sunnyAnimation.json in Resources */ = {isa = PBXBuildFile; fileRef = F3AB5A482D02ECC200A88985 /* sunnyAnimation.json */; };
+		F3AB5A4B2D03106400A88985 /* cloudyAnimation.json in Resources */ = {isa = PBXBuildFile; fileRef = F3AB5A4A2D03106400A88985 /* cloudyAnimation.json */; };
+		F3AB5A4E2D0311D600A88985 /* snowyAnimation.json in Resources */ = {isa = PBXBuildFile; fileRef = F3AB5A4C2D0311D600A88985 /* snowyAnimation.json */; };
+		F3AB5A4F2D0311D600A88985 /* rainyAnimation.json in Resources */ = {isa = PBXBuildFile; fileRef = F3AB5A4D2D0311D600A88985 /* rainyAnimation.json */; };
+		F3AB5A512D03150A00A88985 /* foggyAnimation.json in Resources */ = {isa = PBXBuildFile; fileRef = F3AB5A502D03150A00A88985 /* foggyAnimation.json */; };
+		F3AB5A532D0315C100A88985 /* thunderstormAnimation.json in Resources */ = {isa = PBXBuildFile; fileRef = F3AB5A522D0315C100A88985 /* thunderstormAnimation.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -58,6 +63,11 @@
 		F3742EE62CAFCE4E00E062E0 /* ForecastWeatherResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForecastWeatherResult.swift; sourceTree = "<group>"; };
 		F3742EE82CAFCE6000E062E0 /* TableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewCell.swift; sourceTree = "<group>"; };
 		F3AB5A482D02ECC200A88985 /* sunnyAnimation.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = sunnyAnimation.json; sourceTree = "<group>"; };
+		F3AB5A4A2D03106400A88985 /* cloudyAnimation.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = cloudyAnimation.json; sourceTree = "<group>"; };
+		F3AB5A4C2D0311D600A88985 /* snowyAnimation.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = snowyAnimation.json; sourceTree = "<group>"; };
+		F3AB5A4D2D0311D600A88985 /* rainyAnimation.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = rainyAnimation.json; sourceTree = "<group>"; };
+		F3AB5A502D03150A00A88985 /* foggyAnimation.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = foggyAnimation.json; sourceTree = "<group>"; };
+		F3AB5A522D0315C100A88985 /* thunderstormAnimation.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = thunderstormAnimation.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,7 +146,7 @@
 				F36673F42CEB2EB5008C2D42 /* Fonts */,
 				F359DD3F2C8EEBEC00F51E40 /* LaunchScreen.storyboard */,
 				F359DD3D2C8EEBEC00F51E40 /* Assets.xcassets */,
-				F3AB5A482D02ECC200A88985 /* sunnyAnimation.json */,
+				F3AB5A542D0315F000A88985 /* LottieAnimation */,
 				F359DD422C8EEBEC00F51E40 /* Info.plist */,
 			);
 			path = Resource;
@@ -175,6 +185,19 @@
 				F36673FE2CEB3024008C2D42 /* Font.swift */,
 			);
 			path = Utills;
+			sourceTree = "<group>";
+		};
+		F3AB5A542D0315F000A88985 /* LottieAnimation */ = {
+			isa = PBXGroup;
+			children = (
+				F3AB5A482D02ECC200A88985 /* sunnyAnimation.json */,
+				F3AB5A4A2D03106400A88985 /* cloudyAnimation.json */,
+				F3AB5A4D2D0311D600A88985 /* rainyAnimation.json */,
+				F3AB5A4C2D0311D600A88985 /* snowyAnimation.json */,
+				F3AB5A502D03150A00A88985 /* foggyAnimation.json */,
+				F3AB5A522D0315C100A88985 /* thunderstormAnimation.json */,
+			);
+			path = LottieAnimation;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -246,13 +269,18 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F3AB5A512D03150A00A88985 /* foggyAnimation.json in Resources */,
+				F3AB5A532D0315C100A88985 /* thunderstormAnimation.json in Resources */,
 				F359DD3E2C8EEBEC00F51E40 /* Assets.xcassets in Resources */,
 				F36674212CF06258008C2D42 /* Gabarito-SemiBold.ttf in Resources */,
 				F36674202CF06256008C2D42 /* Gabarito-Bold.ttf in Resources */,
+				F3AB5A4E2D0311D600A88985 /* snowyAnimation.json in Resources */,
+				F3AB5A4F2D0311D600A88985 /* rainyAnimation.json in Resources */,
 				F36674222CF0625A008C2D42 /* Gabarito-Medium.ttf in Resources */,
 				F359DD412C8EEBEC00F51E40 /* Base in Resources */,
 				F3AB5A492D02ECC200A88985 /* sunnyAnimation.json in Resources */,
 				F36674232CF0625D008C2D42 /* Gabarito-Regular.ttf in Resources */,
+				F3AB5A4B2D03106400A88985 /* cloudyAnimation.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
