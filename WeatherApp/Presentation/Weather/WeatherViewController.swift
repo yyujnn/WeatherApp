@@ -172,21 +172,17 @@ class WeatherViewController: UIViewController {
     
     private func configureUI() {
         view.backgroundColor = .sunnyBackground
-        [
-            titleLabel,
-            tempLabel,
-            degreeLabel,
-            stateLabel,
-            tempStackView,
-            leftAnimationView,
-            rightAnimationView,
-            tableView
-        ].forEach{ view.addSubview($0) }
         
-        [
-            tempMaxLabel,
-            tempMinLabel
-        ].forEach{ tempStackView.addArrangedSubview($0) }
+        view.addSubviews(titleLabel,
+                         tempLabel,
+                         degreeLabel,
+                         stateLabel,
+                         tempStackView,
+                         leftAnimationView,
+                         rightAnimationView,
+                         tableView)
+
+        tempStackView.addArrangedSubviews(tempMaxLabel, tempMinLabel)
         
         titleLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()

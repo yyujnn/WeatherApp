@@ -32,6 +32,7 @@
 		F3AB5A532D0315C100A88985 /* thunderstormAnimation.json in Resources */ = {isa = PBXBuildFile; fileRef = F3AB5A522D0315C100A88985 /* thunderstormAnimation.json */; };
 		F3AB5A572D031B8F00A88985 /* WeatherCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AB5A562D031B8F00A88985 /* WeatherCollectionViewCell.swift */; };
 		F3AB5A5A2D05903D00A88985 /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = F3AB5A592D05903D00A88985 /* Then */; };
+		F3AB5A5D2D0595BB00A88985 /* UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AB5A5C2D0595BB00A88985 /* UIView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -71,6 +72,7 @@
 		F3AB5A502D03150A00A88985 /* foggyAnimation.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = foggyAnimation.json; sourceTree = "<group>"; };
 		F3AB5A522D0315C100A88985 /* thunderstormAnimation.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = thunderstormAnimation.json; sourceTree = "<group>"; };
 		F3AB5A562D031B8F00A88985 /* WeatherCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherCollectionViewCell.swift; sourceTree = "<group>"; };
+		F3AB5A5C2D0595BB00A88985 /* UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -188,6 +190,7 @@
 			isa = PBXGroup;
 			children = (
 				F36673FE2CEB3024008C2D42 /* Font.swift */,
+				F3AB5A5B2D05954F00A88985 /* Extension */,
 			);
 			path = Utills;
 			sourceTree = "<group>";
@@ -211,6 +214,14 @@
 				F3AB5A562D031B8F00A88985 /* WeatherCollectionViewCell.swift */,
 			);
 			path = Cell;
+			sourceTree = "<group>";
+		};
+		F3AB5A5B2D05954F00A88985 /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+				F3AB5A5C2D0595BB00A88985 /* UIView.swift */,
+			);
+			path = Extension;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -306,6 +317,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F3AB5A5D2D0595BB00A88985 /* UIView.swift in Sources */,
 				F3AB5A572D031B8F00A88985 /* WeatherCollectionViewCell.swift in Sources */,
 				F3742EE72CAFCE4E00E062E0 /* ForecastWeatherResult.swift in Sources */,
 				F36673EF2CEB2947008C2D42 /* SearchViewController.swift in Sources */,
