@@ -6,8 +6,9 @@
 //
 
 import UIKit
-import SnapKit
 import Lottie
+import SnapKit
+import Then
 
 class WeatherViewController: UIViewController {
 
@@ -22,76 +23,57 @@ class WeatherViewController: UIViewController {
         URLQueryItem(name: "units", value: "metric")
     ]
     
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Seoul"
-        label.textColor = .appBlack
-        label.font = Gabarito.regular.of(size: 30)
-        return label
-    }()
+    private let titleLabel = UILabel().then {
+        $0.text = "Seoul"
+        $0.textColor = .appBlack
+        $0.font = Gabarito.regular.of(size: 30)
+    }
     
-    private let tempLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .appBlack
-        label.text = "20"
-        label.font = Gabarito.medium.of(size: 100)
-        return label
-    }()
+    private let tempLabel = UILabel().then {
+        $0.textColor = .appBlack
+        $0.text = "20"
+        $0.font = Gabarito.medium.of(size: 100)
+    }
     
-    private let degreeLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .appBlack
-        label.text = "°"
-        label.font = Gabarito.medium.of(size: 100)
-        return label
-    }()
+    private let degreeLabel = UILabel().then {
+        $0.textColor = .appBlack
+        $0.text = "°"
+        $0.font = Gabarito.medium.of(size: 100)
+    }
     
-    private let stateLabel: UILabel = {
-       let label = UILabel()
-        label.textColor = .darkGray
-        label.text = "Sunny"
-        label.font = Gabarito.regular.of(size: 26)
-        return label
-    }()
+    private let stateLabel = UILabel().then {
+        $0.textColor = .darkGray
+        $0.text = "Sunny"
+        $0.font = Gabarito.regular.of(size: 26)
+    }
     
-    private let tempMinLabel: UILabel = {
-       let label = UILabel()
-        label.textColor = .darkGray
-        label.text = "L: 20°"
-        label.font = Gabarito.semibold.of(size: 20)
-        return label
-    }()
+    private let tempMinLabel = UILabel().then {
+        $0.textColor = .darkGray
+        $0.text = "L: 20°"
+        $0.font = Gabarito.semibold.of(size: 20)
+    }
     
-    private let tempMaxLabel: UILabel = {
-       let label = UILabel()
-        label.textColor = .darkGray
-        label.text = "H:20°"
-        label.font = Gabarito.semibold.of(size: 20)
-        return label
-    }()
+    private let tempMaxLabel = UILabel().then {
+        $0.textColor = .darkGray
+        $0.text = "H: 20°"
+        $0.font = Gabarito.semibold.of(size: 20)
+    }
     
-    private let tempStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.axis = .horizontal
-        stackView.spacing = 20
-        stackView.distribution = .fillEqually
-        return stackView
-    }()
+    private let tempStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 20
+        $0.distribution = .fillEqually
+    }
     
     private let leftAnimationView = LottieAnimationView(name: "sunnyAnimation")
     private let rightAnimationView = LottieAnimationView(name: "sunnyAnimation")
     
-    private lazy var tableView: UITableView = {
-        let tableView = UITableView()
-        tableView.backgroundColor = .white
-        // delegate: tableView의 여러가지 속성 세팅을 이 ViewController에서 대신 세팅하는 코드 작성해주겠다.
-        tableView.delegate = self
-        // dataSource: 테이블 뷰 안에 들어갈 데이터를 이 ViewController에서 세팅해주겠다.
-        tableView.dataSource = self
-        // 테이블 뷰 셀 등록
-        tableView.register(TableViewCell.self, forCellReuseIdentifier: TableViewCell.identifier)
-        return tableView
-    }()
+    private lazy var tableView = UITableView().then {
+        $0.backgroundColor = .white
+        $0.delegate = self
+        $0.dataSource = self
+        $0.register(TableViewCell.self, forCellReuseIdentifier: TableViewCell.identifier)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
