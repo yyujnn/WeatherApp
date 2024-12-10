@@ -37,36 +37,36 @@ class WeatherViewController: UIViewController {
     
     private let titleLabel = UILabel().then {
         $0.text = "Seoul"
-        $0.textColor = .appBlack
+        $0.textColor = .sunnyFont
         $0.font = Gabarito.regular.of(size: 30)
     }
     
     private let tempLabel = UILabel().then {
-        $0.textColor = .appBlack
+        $0.textColor = .sunnyFont
         $0.text = "20"
         $0.font = Gabarito.medium.of(size: 100)
     }
     
     private let degreeLabel = UILabel().then {
-        $0.textColor = .appBlack
+        $0.textColor = .sunnyFont
         $0.text = "°"
         $0.font = Gabarito.medium.of(size: 100)
     }
     
     private let stateLabel = UILabel().then {
-        $0.textColor = .darkGray
+        $0.textColor = .sunnyFont
         $0.text = "Sunny"
         $0.font = Gabarito.regular.of(size: 26)
     }
     
     private let tempMinLabel = UILabel().then {
-        $0.textColor = .darkGray
+        $0.textColor = .sunnyFont
         $0.text = "L: 20°"
         $0.font = Gabarito.semibold.of(size: 20)
     }
     
     private let tempMaxLabel = UILabel().then {
-        $0.textColor = .darkGray
+        $0.textColor = .sunnyFont
         $0.text = "H: 20°"
         $0.font = Gabarito.semibold.of(size: 20)
     }
@@ -78,7 +78,7 @@ class WeatherViewController: UIViewController {
     }
     
     private let hourlyForecastView = UIView().then {
-        $0.backgroundColor = .green
+        $0.backgroundColor = .sunnyPoint1
         $0.layer.cornerRadius = 26
         $0.clipsToBounds = true
     }
@@ -98,7 +98,7 @@ class WeatherViewController: UIViewController {
     }
     
     private let weeklyForecastView = UIView().then {
-        $0.backgroundColor = .red
+        $0.backgroundColor = .sunnyPoint2
         $0.layer.cornerRadius = 16
         $0.clipsToBounds = true
     }
