@@ -23,6 +23,18 @@ class WeatherViewController: UIViewController {
         URLQueryItem(name: "units", value: "metric")
     ]
     
+    private let scrollView = UIScrollView().then {
+        $0.backgroundColor = .clear
+        $0.showsVerticalScrollIndicator = false
+    }
+    
+    private let contentView = UIView().then {
+        $0.backgroundColor = .clear
+    }
+    
+    private let leftAnimationView = LottieAnimationView(name: "sunnyAnimation")
+    private let rightAnimationView = LottieAnimationView(name: "sunnyAnimation")
+    
     private let titleLabel = UILabel().then {
         $0.text = "Seoul"
         $0.textColor = .appBlack
@@ -65,8 +77,31 @@ class WeatherViewController: UIViewController {
         $0.distribution = .fillEqually
     }
     
-    private let leftAnimationView = LottieAnimationView(name: "sunnyAnimation")
-    private let rightAnimationView = LottieAnimationView(name: "sunnyAnimation")
+    private let hourlyForecastView = UIView().then {
+        $0.backgroundColor = .green
+        $0.layer.cornerRadius = 26
+        $0.clipsToBounds = true
+    }
+    
+    private let clockImageView = UIImageView().then {
+        $0.image = UIImage(systemName: "clock")
+        $0.contentMode = .scaleAspectFit
+    }
+    
+    private let hourLable = UILabel().then {
+        $0.text = "Hourly Forecast"
+        $0.font = Gabarito.regular.of(size: 16)
+    }
+    
+    private let separatorLine = UIView().then {
+        $0.backgroundColor = .lightGray
+    }
+    
+    private let weeklyForecastView = UIView().then {
+        $0.backgroundColor = .red
+        $0.layer.cornerRadius = 16
+        $0.clipsToBounds = true
+    }
     
     private lazy var tableView = UITableView().then {
         $0.backgroundColor = .white
@@ -75,9 +110,15 @@ class WeatherViewController: UIViewController {
         $0.register(TableViewCell.self, forCellReuseIdentifier: TableViewCell.identifier)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.isHidden = true
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureUI()
+        setupViews()
+        setupConstraints()
         
         setupLottieAnimations()
 //        fetchCurrentWeatherData()
@@ -170,23 +211,44 @@ class WeatherViewController: UIViewController {
         }
     }
     
-    private func configureUI() {
+    private func setupViews() {
         view.backgroundColor = .sunnyBackground
         
-        view.addSubviews(titleLabel,
+        view.addSubview(scrollView)
+        
+        scrollView.addSubview(contentView)
+        
+        contentView.addSubviews(titleLabel,
                          tempLabel,
                          degreeLabel,
                          stateLabel,
                          tempStackView,
                          leftAnimationView,
                          rightAnimationView,
-                         tableView)
+                         hourlyForecastView,
+                         weeklyForecastView
+        )
 
         tempStackView.addArrangedSubviews(tempMaxLabel, tempMinLabel)
         
+//        hourlyForecastView.addSubviews(clockImageView, hourLable, separatorLine)
+        
+    }
+    
+    private func setupConstraints() {
+        scrollView.snp.makeConstraints {
+            $0.edges.equalTo(view.safeAreaLayoutGuide)
+        }
+        
+        contentView.snp.makeConstraints {
+            $0.edges.equalTo(scrollView.contentLayoutGuide)
+            $0.width.equalTo(scrollView.frameLayoutGuide)
+            $0.bottom.equalTo(weeklyForecastView.snp.bottom).offset(16)
+        }
+        
         titleLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().offset(100)
+            $0.top.equalToSuperview()
         }
         
         tempLabel.snp.makeConstraints {
@@ -221,11 +283,24 @@ class WeatherViewController: UIViewController {
             $0.width.height.equalTo(120)
         }
         
-        tableView.snp.makeConstraints {
-            $0.top.equalTo(rightAnimationView.snp.bottom).offset(20)
-            $0.leading.trailing.equalToSuperview().inset(20)
-            $0.bottom.equalToSuperview().inset(100)
+        hourlyForecastView.snp.makeConstraints {
+            $0.top.equalTo(tempStackView.snp.bottom).offset(64)
+            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.height.equalTo(160)
         }
+        
+        weeklyForecastView.snp.makeConstraints {
+            $0.top.equalTo(hourlyForecastView.snp.bottom).offset(20)
+            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.height.equalTo(460)
+//            $0.bottom.equalToSuperview().inset(100)
+        }
+        
+//        tableView.snp.makeConstraints {
+//            $0.top.equalTo(rightAnimationView.snp.bottom).offset(20)
+//            $0.leading.trailing.equalToSuperview().inset(20)
+//            $0.bottom.equalToSuperview().inset(100)
+//        }
     }
 }
 
