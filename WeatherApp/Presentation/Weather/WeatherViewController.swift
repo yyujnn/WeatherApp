@@ -86,21 +86,39 @@ class WeatherViewController: UIViewController {
     private let clockImageView = UIImageView().then {
         $0.image = UIImage(systemName: "clock")
         $0.contentMode = .scaleAspectFit
+        $0.tintColor = .sunnyFont
     }
     
     private let hourLable = UILabel().then {
         $0.text = "Hourly Forecast"
-        $0.font = Gabarito.regular.of(size: 16)
+        $0.font = Gabarito.regular.of(size: 14)
+        $0.textColor = .sunnyFont
     }
     
     private let separatorLine = UIView().then {
-        $0.backgroundColor = .lightGray
+        $0.backgroundColor = .white
     }
     
     private let weeklyForecastView = UIView().then {
         $0.backgroundColor = .sunnyPoint2
         $0.layer.cornerRadius = 16
         $0.clipsToBounds = true
+    }
+    
+    private let calendarImageView = UIImageView().then {
+        $0.image = UIImage(systemName: "calendar")
+        $0.contentMode = .scaleAspectFit
+        $0.tintColor = .sunnyFont
+    }
+    
+    private let weekLable = UILabel().then {
+        $0.text = "Weekly Forecast"
+        $0.font = Gabarito.regular.of(size: 14)
+        $0.textColor = .sunnyFont
+    }
+    
+    private let separatorLine2 = UIView().then {
+        $0.backgroundColor = .white
     }
     
     private lazy var tableView = UITableView().then {
@@ -122,7 +140,7 @@ class WeatherViewController: UIViewController {
         
         setupLottieAnimations()
         
-        updateThme(for: "stormy")
+        updateThme(for: "sunny")
 //        fetchCurrentWeatherData()
 //        fetchForecastData()
     }
@@ -220,7 +238,8 @@ class WeatherViewController: UIViewController {
         
         scrollView.addSubview(contentView)
         
-        contentView.addSubviews(titleLabel,
+        contentView.addSubviews(
+            titleLabel,
                          tempLabel,
                          degreeLabel,
                          stateLabel,
@@ -233,7 +252,9 @@ class WeatherViewController: UIViewController {
 
         tempStackView.addArrangedSubviews(tempMaxLabel, tempMinLabel)
         
-//        hourlyForecastView.addSubviews(clockImageView, hourLable, separatorLine)
+        hourlyForecastView.addSubviews(clockImageView, hourLable, separatorLine)
+        
+        weeklyForecastView.addSubviews(calendarImageView, weekLable, separatorLine2)
         
     }
     
@@ -295,7 +316,40 @@ class WeatherViewController: UIViewController {
             $0.top.equalTo(hourlyForecastView.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview().inset(16)
             $0.height.equalTo(460)
-//            $0.bottom.equalToSuperview().inset(100)
+        }
+        
+        clockImageView.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(8)
+            $0.leading.equalToSuperview().inset(16)
+            $0.width.height.equalTo(20)
+        }
+        
+        hourLable.snp.makeConstraints {
+            $0.centerY.equalTo(clockImageView)
+            $0.leading.equalTo(clockImageView.snp.trailing).offset(4)
+        }
+        
+        separatorLine.snp.makeConstraints {
+            $0.top.equalTo(clockImageView.snp.bottom).offset(8)
+            $0.leading.trailing.equalToSuperview().inset(8)
+            $0.height.equalTo(0.5)
+        }
+        
+        calendarImageView.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(8)
+            $0.leading.equalToSuperview().inset(16)
+            $0.width.height.equalTo(20)
+        }
+        
+        weekLable.snp.makeConstraints {
+            $0.centerY.equalTo(calendarImageView)
+            $0.leading.equalTo(calendarImageView.snp.trailing).offset(4)
+        }
+        
+        separatorLine2.snp.makeConstraints {
+            $0.top.equalTo(calendarImageView.snp.bottom).offset(8)
+            $0.leading.trailing.equalToSuperview().inset(8)
+            $0.height.equalTo(0.5)
         }
         
 //        tableView.snp.makeConstraints {
@@ -317,6 +371,10 @@ class WeatherViewController: UIViewController {
         tempMaxLabel.textColor = theme.fontColor
         tempMinLabel.textColor = theme.fontColor
         hourlyForecastView.backgroundColor = theme.pointColor1
+        clockImageView.tintColor = theme.fontColor
+        hourLable.textColor = theme.fontColor
+        calendarImageView.tintColor = theme.fontColor
+        weekLable.textColor = theme.fontColor
         weeklyForecastView.backgroundColor = theme.pointColor2
         
         leftAnimationView.animation = LottieAnimation.named(theme.animationName)
@@ -344,6 +402,6 @@ extension WeatherViewController: UITableViewDataSource {
         return dataSource.count
     }
 }
-//#Preview{
-//    WeatherViewController()
-//}
+#Preview{
+    WeatherViewController()
+}
