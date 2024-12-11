@@ -32,8 +32,8 @@ class WeatherViewController: UIViewController {
         $0.backgroundColor = .clear
     }
     
-    private let leftAnimationView = LottieAnimationView(name: "sunnyAnimation")
-    private let rightAnimationView = LottieAnimationView(name: "sunnyAnimation")
+    private let leftAnimationView = LottieAnimationView()
+    private let rightAnimationView = LottieAnimationView()
     
     private let titleLabel = UILabel().then {
         $0.text = "Seoul"
@@ -121,6 +121,8 @@ class WeatherViewController: UIViewController {
         setupConstraints()
         
         setupLottieAnimations()
+        
+        updateThme(for: "stormy")
 //        fetchCurrentWeatherData()
 //        fetchForecastData()
     }
@@ -301,6 +303,24 @@ class WeatherViewController: UIViewController {
 //            $0.leading.trailing.equalToSuperview().inset(20)
 //            $0.bottom.equalToSuperview().inset(100)
 //        }
+    }
+    
+    // 테마 업데이트 메서드
+    private func updateThme(for weather: String) {
+        let theme = WeatherThemeManager.shared.updateTheme(for: weather)
+        
+        view.backgroundColor = theme.backgroundColor
+        titleLabel.textColor = theme.fontColor
+        tempLabel.textColor = theme.fontColor
+        degreeLabel.textColor = theme.fontColor
+        stateLabel.textColor = theme.fontColor
+        tempMaxLabel.textColor = theme.fontColor
+        tempMinLabel.textColor = theme.fontColor
+        hourlyForecastView.backgroundColor = theme.pointColor1
+        weeklyForecastView.backgroundColor = theme.pointColor2
+        
+        leftAnimationView.animation = LottieAnimation.named(theme.animationName)
+        rightAnimationView.animation = LottieAnimation.named(theme.animationName)
     }
 }
 

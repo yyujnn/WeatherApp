@@ -29,7 +29,7 @@
 		F3AB5A4E2D0311D600A88985 /* snowyAnimation.json in Resources */ = {isa = PBXBuildFile; fileRef = F3AB5A4C2D0311D600A88985 /* snowyAnimation.json */; };
 		F3AB5A4F2D0311D600A88985 /* rainyAnimation.json in Resources */ = {isa = PBXBuildFile; fileRef = F3AB5A4D2D0311D600A88985 /* rainyAnimation.json */; };
 		F3AB5A512D03150A00A88985 /* foggyAnimation.json in Resources */ = {isa = PBXBuildFile; fileRef = F3AB5A502D03150A00A88985 /* foggyAnimation.json */; };
-		F3AB5A532D0315C100A88985 /* thunderstormAnimation.json in Resources */ = {isa = PBXBuildFile; fileRef = F3AB5A522D0315C100A88985 /* thunderstormAnimation.json */; };
+		F3AB5A532D0315C100A88985 /* stormyAnimation.json in Resources */ = {isa = PBXBuildFile; fileRef = F3AB5A522D0315C100A88985 /* stormyAnimation.json */; };
 		F3AB5A572D031B8F00A88985 /* WeatherCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AB5A562D031B8F00A88985 /* WeatherCollectionViewCell.swift */; };
 		F3AB5A5A2D05903D00A88985 /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = F3AB5A592D05903D00A88985 /* Then */; };
 		F3AB5A5D2D0595BB00A88985 /* UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AB5A5C2D0595BB00A88985 /* UIView.swift */; };
@@ -72,7 +72,7 @@
 		F3AB5A4C2D0311D600A88985 /* snowyAnimation.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = snowyAnimation.json; sourceTree = "<group>"; };
 		F3AB5A4D2D0311D600A88985 /* rainyAnimation.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = rainyAnimation.json; sourceTree = "<group>"; };
 		F3AB5A502D03150A00A88985 /* foggyAnimation.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = foggyAnimation.json; sourceTree = "<group>"; };
-		F3AB5A522D0315C100A88985 /* thunderstormAnimation.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = thunderstormAnimation.json; sourceTree = "<group>"; };
+		F3AB5A522D0315C100A88985 /* stormyAnimation.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = stormyAnimation.json; sourceTree = "<group>"; };
 		F3AB5A562D031B8F00A88985 /* WeatherCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherCollectionViewCell.swift; sourceTree = "<group>"; };
 		F3AB5A5C2D0595BB00A88985 /* UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIView.swift; sourceTree = "<group>"; };
 		F3AB5A5E2D0834BF00A88985 /* WeatherTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherTheme.swift; sourceTree = "<group>"; };
@@ -209,7 +209,7 @@
 				F3AB5A4D2D0311D600A88985 /* rainyAnimation.json */,
 				F3AB5A4C2D0311D600A88985 /* snowyAnimation.json */,
 				F3AB5A502D03150A00A88985 /* foggyAnimation.json */,
-				F3AB5A522D0315C100A88985 /* thunderstormAnimation.json */,
+				F3AB5A522D0315C100A88985 /* stormyAnimation.json */,
 			);
 			path = LottieAnimation;
 			sourceTree = "<group>";
@@ -310,7 +310,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F3AB5A512D03150A00A88985 /* foggyAnimation.json in Resources */,
-				F3AB5A532D0315C100A88985 /* thunderstormAnimation.json in Resources */,
+				F3AB5A532D0315C100A88985 /* stormyAnimation.json in Resources */,
 				F359DD3E2C8EEBEC00F51E40 /* Assets.xcassets in Resources */,
 				F36674212CF06258008C2D42 /* Gabarito-SemiBold.ttf in Resources */,
 				F36674202CF06256008C2D42 /* Gabarito-Bold.ttf in Resources */,

@@ -38,7 +38,7 @@ final class WeatherThemeManager {
                 fontColor: .appDarkGray,
                 pointColor1: .rainyPoint1,
                 pointColor2: .rainyPoint2,
-                animationName: "sunnyAnimation"
+                animationName: "rainyAnimation"
             )
             
         case "snowy":
@@ -56,7 +56,7 @@ final class WeatherThemeManager {
                 fontColor: .appDarkGray,
                 pointColor1: .foggyPoint1,
                 pointColor2: .foggyPoint2,
-                animationName: "snowyAnimation"
+                animationName: "foggyAnimation"
             )
             
         case "stormy":
@@ -65,7 +65,7 @@ final class WeatherThemeManager {
                 fontColor: .white,
                 pointColor1: .stormyPoint1,
                 pointColor2: .stormyPoint2,
-                animationName: "sstormyAnimation"
+                animationName: "stormyAnimation"
             )
             
         default:
