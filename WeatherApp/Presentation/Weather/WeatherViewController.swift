@@ -121,6 +121,20 @@ class WeatherViewController: UIViewController {
         $0.backgroundColor = .white
     }
     
+    private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout).then {
+        $0.backgroundColor = .clear
+        $0.showsHorizontalScrollIndicator = false // 스크롤바 숨김
+        $0.delegate = self
+        $0.dataSource = self
+        $0.register(HourlyForecastCell.self, forCellWithReuseIdentifier: HourlyForecastCell.identifier)
+    }
+    
+    private lazy var layout = UICollectionViewFlowLayout().then {
+        $0.scrollDirection = .horizontal // 가로 스크롤
+        $0.minimumLineSpacing = 10 // 셀 간 간격
+        $0.itemSize = CGSize(width: 60, height: 80)
+    }
+    
     private lazy var tableView = UITableView().then {
         $0.backgroundColor = .white
         $0.delegate = self
@@ -252,7 +266,7 @@ class WeatherViewController: UIViewController {
 
         tempStackView.addArrangedSubviews(tempMaxLabel, tempMinLabel)
         
-        hourlyForecastView.addSubviews(clockImageView, hourLable, separatorLine)
+        hourlyForecastView.addSubviews(clockImageView, hourLable, separatorLine, collectionView)
         
         weeklyForecastView.addSubviews(calendarImageView, weekLable, separatorLine2)
         
@@ -309,13 +323,13 @@ class WeatherViewController: UIViewController {
         hourlyForecastView.snp.makeConstraints {
             $0.top.equalTo(tempStackView.snp.bottom).offset(64)
             $0.leading.trailing.equalToSuperview().inset(16)
-            $0.height.equalTo(160)
+            $0.height.equalTo(140)
         }
         
-        weeklyForecastView.snp.makeConstraints {
-            $0.top.equalTo(hourlyForecastView.snp.bottom).offset(20)
-            $0.leading.trailing.equalToSuperview().inset(16)
-            $0.height.equalTo(460)
+        collectionView.snp.makeConstraints {
+            $0.top.equalTo(separatorLine.snp.bottom).offset(8)
+            $0.leading.trailing.equalToSuperview().inset(8)
+            $0.bottom.equalToSuperview().inset(8)
         }
         
         clockImageView.snp.makeConstraints {
@@ -333,6 +347,12 @@ class WeatherViewController: UIViewController {
             $0.top.equalTo(clockImageView.snp.bottom).offset(8)
             $0.leading.trailing.equalToSuperview().inset(8)
             $0.height.equalTo(0.5)
+        }
+        
+        weeklyForecastView.snp.makeConstraints {
+            $0.top.equalTo(hourlyForecastView.snp.bottom).offset(20)
+            $0.leading.trailing.equalToSuperview().inset(16)
+            $0.height.equalTo(460)
         }
         
         calendarImageView.snp.makeConstraints {
@@ -381,7 +401,20 @@ class WeatherViewController: UIViewController {
         rightAnimationView.animation = LottieAnimation.named(theme.animationName)
     }
 }
-
+extension WeatherViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 10
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HourlyForecastCell.identifier, for: indexPath) as? HourlyForecastCell else { return UICollectionViewCell() }
+        
+        cell.configure(time: "15:00", temperature: "\(indexPath.item)", iconName: "sun.max.fill")
+        
+        return cell
+    }
+}
+                                    
 extension WeatherViewController: UITableViewDelegate {
     // 테이블 뷰 셀 높이 크기 지정
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
