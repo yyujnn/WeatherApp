@@ -351,7 +351,7 @@ class WeatherViewController: UIViewController {
         weeklyForecastView.snp.makeConstraints {
             $0.top.equalTo(hourlyForecastView.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview().inset(16)
-            $0.height.equalTo(460)
+            $0.height.equalTo(340)
         }
         
         calendarImageView.snp.makeConstraints {
@@ -432,7 +432,7 @@ extension WeatherViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
+        return 7
     }
 }
 #Preview{
