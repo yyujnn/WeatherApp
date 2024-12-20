@@ -136,10 +136,10 @@ class WeatherViewController: UIViewController {
     }
     
     private lazy var tableView = UITableView().then {
-        $0.backgroundColor = .white
+        $0.backgroundColor = .clear
         $0.delegate = self
         $0.dataSource = self
-        $0.register(TableViewCell.self, forCellReuseIdentifier: TableViewCell.identifier)
+        $0.register(WeeklyForecastCell.self, forCellReuseIdentifier: WeeklyForecastCell.identifier)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -252,8 +252,7 @@ class WeatherViewController: UIViewController {
         
         scrollView.addSubview(contentView)
         
-        contentView.addSubviews(
-            titleLabel,
+        contentView.addSubviews(titleLabel,
                          tempLabel,
                          degreeLabel,
                          stateLabel,
@@ -268,7 +267,7 @@ class WeatherViewController: UIViewController {
         
         hourlyForecastView.addSubviews(clockImageView, hourLable, separatorLine, collectionView)
         
-        weeklyForecastView.addSubviews(calendarImageView, weekLable, separatorLine2)
+        weeklyForecastView.addSubviews(calendarImageView, weekLable, separatorLine2, tableView)
         
     }
     
@@ -372,11 +371,11 @@ class WeatherViewController: UIViewController {
             $0.height.equalTo(0.5)
         }
         
-//        tableView.snp.makeConstraints {
-//            $0.top.equalTo(rightAnimationView.snp.bottom).offset(20)
-//            $0.leading.trailing.equalToSuperview().inset(20)
-//            $0.bottom.equalToSuperview().inset(100)
-//        }
+        tableView.snp.makeConstraints {
+            $0.top.equalTo(separatorLine2.snp.bottom).offset(8)
+            $0.leading.trailing.equalToSuperview().inset(8)
+            $0.bottom.equalToSuperview().inset(8)
+        }
     }
     
     // 테마 업데이트 메서드
@@ -426,13 +425,14 @@ extension WeatherViewController: UITableViewDataSource {
     // 테이블 뷰의 indexPath마다 테이블 뷰 셀을 지정.
     // indexPath: 테이블 뷰의 셀과 섹션을 의미
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: TableViewCell.identifier) as? TableViewCell else { return UITableViewCell() }
-        cell.configureCell(forecastWeather: dataSource[indexPath.row])
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: WeeklyForecastCell.identifier) as? WeeklyForecastCell else { return UITableViewCell() }
+        cell.configureCell()
+        cell.backgroundColor = .clear
         return cell
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return dataSource.count
+        return 10
     }
 }
 #Preview{
