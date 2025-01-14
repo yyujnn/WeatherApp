@@ -153,25 +153,22 @@ class WeatherViewController: UIViewController {
         super.viewDidLoad()
         setupViews()
         setupConstraints()
-        
-        setupLottieAnimations()
-        
         updateThme(for: "sunny")
+        setupLottieAnimations()
         fetchCurrentWeatherData()
 //        fetchForecastData()
     }
     
     private func setupLottieAnimations() {
-        leftAnimationView.contentMode = .scaleAspectFit
-        leftAnimationView.loopMode = .loop
-        leftAnimationView.animationSpeed = 0.5
-        
-        rightAnimationView.contentMode = .scaleAspectFit
-        rightAnimationView.loopMode = .loop
-        rightAnimationView.animationSpeed = 0.5
-        
-        leftAnimationView.play()
-        rightAnimationView.play()
+        configureLottieView(leftAnimationView)
+        configureLottieView(rightAnimationView)
+    }
+    
+    private func configureLottieView(_ animationView: LottieAnimationView) {
+        animationView.contentMode = .scaleAspectFit
+        animationView.loopMode = .loop
+        animationView.animationSpeed = 1.0
+        animationView.play()
     }
     
     // 서버 데이터 불러오는 메서드
@@ -201,13 +198,16 @@ class WeatherViewController: UIViewController {
         }.resume()
     }
     
+    private func makeURL(endpoint: String) -> URL? {
+        var urlComponents = URLComponents(string: "https://api.openweathermap.org/data/2.5/\(endpoint)")
+        urlComponents?.queryItems = self.urlQueryItems
+        return urlComponents?.url
+    }
+    
     // 서버에서 현재 날씨 데이터를 불러오는 메서드.
     private func fetchCurrentWeatherData() {
-        var urlComponents = URLComponents(string: "https://api.openweathermap.org/data/2.5/weather")
-        urlComponents?.queryItems = self.urlQueryItems
-        
-        guard let url = urlComponents?.url else {
-            print("잘못된 URL")
+        guard let url = makeURL(endpoint: "weather") else {
+            print("유효하지 않은 URL")
             return
         }
         
@@ -224,11 +224,8 @@ class WeatherViewController: UIViewController {
     
     // 서버에서 5일 간 날씨 예보 데이터를 불러오는 메서드
     private func fetchForecastData() {
-        var urlComponents = URLComponents(string: "https://api.openweathermap.org/data/2.5/forecast")
-        urlComponents?.queryItems = self.urlQueryItems
-        
-        guard let url = urlComponents?.url else {
-            print("잘못된 URL")
+        guard let url = makeURL(endpoint: "forecast") else {
+            print("유효하지 않은 URL")
             return
         }
         
