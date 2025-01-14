@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F3378A152D3655F4006168D7 /* OpenWeatherInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = F3378A142D3655F4006168D7 /* OpenWeatherInfo.plist */; };
+		F3378A172D365A47006168D7 /* Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3378A162D365A47006168D7 /* Bundle.swift */; };
 		F359DD352C8EEBE900F51E40 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F359DD342C8EEBE900F51E40 /* AppDelegate.swift */; };
 		F359DD392C8EEBE900F51E40 /* WeatherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F359DD382C8EEBE900F51E40 /* WeatherViewController.swift */; };
 		F359DD3E2C8EEBEC00F51E40 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F359DD3D2C8EEBEC00F51E40 /* Assets.xcassets */; };
@@ -51,6 +53,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		F3378A142D3655F4006168D7 /* OpenWeatherInfo.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = OpenWeatherInfo.plist; sourceTree = "<group>"; };
+		F3378A162D365A47006168D7 /* Bundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bundle.swift; sourceTree = "<group>"; };
 		F359DD312C8EEBE900F51E40 /* WeatherApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WeatherApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F359DD342C8EEBE900F51E40 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F359DD382C8EEBE900F51E40 /* WeatherViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherViewController.swift; sourceTree = "<group>"; };
@@ -160,6 +164,7 @@
 				F359DD3D2C8EEBEC00F51E40 /* Assets.xcassets */,
 				F3AB5A542D0315F000A88985 /* LottieAnimation */,
 				F359DD422C8EEBEC00F51E40 /* Info.plist */,
+				F3378A142D3655F4006168D7 /* OpenWeatherInfo.plist */,
 			);
 			path = Resource;
 			sourceTree = "<group>";
@@ -226,6 +231,7 @@
 			isa = PBXGroup;
 			children = (
 				F3AB5A5C2D0595BB00A88985 /* UIView.swift */,
+				F3378A162D365A47006168D7 /* Bundle.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -311,6 +317,7 @@
 			files = (
 				F3AB5A512D03150A00A88985 /* foggyAnimation.json in Resources */,
 				F3AB5A532D0315C100A88985 /* stormyAnimation.json in Resources */,
+				F3378A152D3655F4006168D7 /* OpenWeatherInfo.plist in Resources */,
 				F359DD3E2C8EEBEC00F51E40 /* Assets.xcassets in Resources */,
 				F36674212CF06258008C2D42 /* Gabarito-SemiBold.ttf in Resources */,
 				F36674202CF06256008C2D42 /* Gabarito-Bold.ttf in Resources */,
@@ -332,6 +339,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F3AB5A5D2D0595BB00A88985 /* UIView.swift in Sources */,
+				F3378A172D365A47006168D7 /* Bundle.swift in Sources */,
 				F3AB5A572D031B8F00A88985 /* HourlyForecastCell.swift in Sources */,
 				F3742EE72CAFCE4E00E062E0 /* ForecastWeatherResult.swift in Sources */,
 				F3AB5A5F2D0834BF00A88985 /* WeatherTheme.swift in Sources */,

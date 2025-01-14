@@ -14,12 +14,14 @@ class WeatherViewController: UIViewController {
 
     private var dataSource = [ForecastWeather]()
     
+    private let apiKey = Bundle.main.weatherKey
+    
     // URL 쿼리 아이템들.
     // 서울역 위경도.
-    private let urlQueryItems: [URLQueryItem] = [
+    private lazy var urlQueryItems: [URLQueryItem] = [
         URLQueryItem(name: "lat", value: "37.5"),
         URLQueryItem(name: "lon", value: "126.9"),
-        URLQueryItem(name: "appid", value: "58507548be95806c09ad4d26225b141b"),
+        URLQueryItem(name: "appid", value: self.apiKey),
         URLQueryItem(name: "units", value: "metric")
     ]
     
@@ -155,7 +157,7 @@ class WeatherViewController: UIViewController {
         setupLottieAnimations()
         
         updateThme(for: "sunny")
-//        fetchCurrentWeatherData()
+        fetchCurrentWeatherData()
 //        fetchForecastData()
     }
     
@@ -435,6 +437,6 @@ extension WeatherViewController: UITableViewDataSource {
         return 7
     }
 }
-#Preview{
-    WeatherViewController()
-}
+//#Preview{
+//    WeatherViewController()
+//}
