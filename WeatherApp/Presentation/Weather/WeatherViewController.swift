@@ -159,6 +159,12 @@ class WeatherViewController: UIViewController {
 //        fetchForecastData()
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        leftAnimationView.stop()
+        rightAnimationView.stop()
+    }
+    
     private func setupLottieAnimations() {
         configureLottieView(leftAnimationView)
         configureLottieView(rightAnimationView)
