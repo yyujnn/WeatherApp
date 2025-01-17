@@ -14,17 +14,6 @@ class WeatherViewController: UIViewController {
 
     private var dataSource = [ForecastWeather]()
     
-    private let apiKey = Bundle.main.weatherKey
-    
-    // URL 쿼리 아이템들.
-    // 서울역 위경도.
-    private lazy var urlQueryItems: [URLQueryItem] = [
-        URLQueryItem(name: "lat", value: "37.5"),
-        URLQueryItem(name: "lon", value: "126.9"),
-        URLQueryItem(name: "appid", value: self.apiKey),
-        URLQueryItem(name: "units", value: "metric")
-    ]
-    
     private let scrollView = UIScrollView().then {
         $0.backgroundColor = .clear
         $0.showsVerticalScrollIndicator = false
@@ -155,8 +144,7 @@ class WeatherViewController: UIViewController {
         setupConstraints()
         updateThme(for: "sunny")
         setupLottieAnimations()
-        fetchCurrentWeatherData()
-//        fetchForecastData()
+        fetchCurrentWeather()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -177,75 +165,18 @@ class WeatherViewController: UIViewController {
         animationView.play()
     }
     
-    // 서버 데이터 불러오는 메서드
-    /// 제네릭: T에는 Decodable을 준수하는 어떤 타입이든 들어올 수 있다.
-    /// @escaping: 메서드가 끝이 나더라도 탈출하여 언제든지 실행되는 클로저
-    private func fetchData<T: Decodable>(url: URL, completion: @escaping (T?) -> Void) {
-        let session = URLSession(configuration: .default)
-        session.dataTask(with: URLRequest(url: url)){data, response, error in
-            guard let data, error == nil else {
-                print("데이터 로드 실패")
-                completion(nil)
-                return
-            }
-            // http status code 성공범위는 200번대.
-            let successRange = 200..<399
-            if let response = response as? HTTPURLResponse, successRange.contains(response.statusCode) {
-                guard let decodeData = try? JSONDecoder().decode(T.self, from: data) else {
-                    print("JSON 디코딩 실패")
-                    completion(nil)
-                    return
-                }
-                completion(decodeData)
-            } else {
-                print("응답 오류")
-                completion(nil)
-            }
-        }.resume()
-    }
-    
-    private func makeURL(endpoint: String) -> URL? {
-        var urlComponents = URLComponents(string: "https://api.openweathermap.org/data/2.5/\(endpoint)")
-        urlComponents?.queryItems = self.urlQueryItems
-        return urlComponents?.url
-    }
-    
-    // 서버에서 현재 날씨 데이터를 불러오는 메서드.
-    private func fetchCurrentWeatherData() {
-        guard let url = makeURL(endpoint: "weather") else {
-            print("유효하지 않은 URL")
-            return
-        }
+    private func fetchCurrentWeather() {
+        let queryItems = [
+            URLQueryItem(name: "lat", value: "37.5"),
+            URLQueryItem(name: "lon", value: "126.9")
+        ]
         
-        fetchData(url: url) { [weak self] (result: CurrentWeatherResult?) in
+        WeatherAPIManager.shared.fetchData(endpoint: "weather", queryItems: queryItems) { [weak self] (result: CurrentWeatherResult?) in
             guard let self, let result else { return }
-            // UI 작업은 메인 쓰레드에서 작업
             DispatchQueue.main.async {
                 self.tempLabel.text = "\(Int(result.main.temp))"
                 self.tempMinLabel.text = "L: \(Int(result.main.tempMin))°"
                 self.tempMaxLabel.text = "H: \(Int(result.main.tempMax))°"
-            }
-        }
-    }
-    
-    // 서버에서 5일 간 날씨 예보 데이터를 불러오는 메서드
-    private func fetchForecastData() {
-        guard let url = makeURL(endpoint: "forecast") else {
-            print("유효하지 않은 URL")
-            return
-        }
-        
-        fetchData(url: url) { [weak self] (result: ForecastWeatherResult?) in
-            guard let self, let result else { return }
-            
-            // result 콘솔에 찍어보기
-            for forecastWeather in result.list {
-                print("\(forecastWeather.main)\n\(forecastWeather.dtTxt)\n\n")
-            }
-            
-            DispatchQueue.main.async {
-                self.dataSource = result.list
-                self.tableView.reloadData()
             }
         }
     }
