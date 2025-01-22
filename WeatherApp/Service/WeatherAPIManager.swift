@@ -15,7 +15,6 @@ class WeatherAPIManager {
     private let baseURL = "https://api.openweathermap.org/data/2.5/"
     private let apiKey = Bundle.main.weatherKey
     
-    // URL 쿼리 아이템들.
     private lazy var defaultQueryItems: [URLQueryItem] = [
         URLQueryItem(name: "appid", value: self.apiKey),
         URLQueryItem(name: "units", value: "metric")
@@ -24,46 +23,34 @@ class WeatherAPIManager {
     private init(){}
     
     // URL 생성
-    private func makeURL(endpoint: String, additionalQueryItems: [URLQueryItem]) -> URL? {
+    private func makeURL(endpoint: String, queryItems: [URLQueryItem]) -> URL? {
         var urlComponents = URLComponents(string: baseURL + endpoint)
-        urlComponents?.queryItems = defaultQueryItems + additionalQueryItems
+        urlComponents?.queryItems = defaultQueryItems + queryItems
         return urlComponents?.url
     }
     
     // MARK: - Generic Fetch
-    // 제네릭 데이터 요청 메서드
-    func fetchData<T: Decodable>(endpoint: String, queryItems: [URLQueryItem], completion: @escaping (T?) -> Void) {
-        guard let url = makeURL(endpoint: endpoint, additionalQueryItems: queryItems) else {
-            print("Invalid URL")
-            completion(nil)
+    func fetchWeatherData(lat: Double, lon: Double, completion: @escaping (Result<CurrentWeatherResult, Error>) -> Void) {
+        
+        let additionalQueryItems = [
+            URLQueryItem(name: "lat", value: "\(lat)"),
+            URLQueryItem(name: "lon", value: "\(lon)")
+        ]
+        
+        // URL 생성
+        guard let url = makeURL(endpoint: "weather", queryItems: additionalQueryItems) else {
+            completion(.failure(NSError(domain: "InvalidURL", code: -1, userInfo: nil)))
             return
         }
-        print("Request URL: \(url.absoluteString)")
         
-        let session = URLSession(configuration: .default)
-        session.dataTask(with: URLRequest(url: url)) { data, response, error in
-            guard let data, error == nil else {
-                print("Failed to load data: \(error?.localizedDescription ?? "Unknown error")")
-                completion(nil)
-                return
+        // Alamofire 요청
+        AF.request(url, method: .get).responseDecodable(of: CurrentWeatherResult.self) { response in
+            switch response.result {
+            case .success(let weatherData):
+                completion(.success(weatherData))
+            case .failure(let error):
+                completion(.failure(error))
             }
-            
-            let successRange = 200..<300
-            if let httpResponse = response as? HTTPURLResponse, successRange.contains(httpResponse.statusCode) {
-                do {
-                    let decodedData = try JSONDecoder().decode(T.self, from: data)
-                    completion(decodedData)
-                } catch {
-                    print("Decoding error: \(error)")
-                    completion(nil)
-                }
-            } else {
-                print("HTTP Response error")
-                if let httpResponse = response as? HTTPURLResponse {
-                    print("HTTP Status Code: \(httpResponse.statusCode)")
-                }
-                completion(nil)
-            }
-        }.resume()
+        }
     }
 }

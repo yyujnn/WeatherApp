@@ -166,17 +166,20 @@ class WeatherViewController: UIViewController {
     }
     
     private func fetchCurrentWeather() {
-        let queryItems = [
-            URLQueryItem(name: "lat", value: "37.5"),
-            URLQueryItem(name: "lon", value: "126.9")
-        ]
-        
-        WeatherAPIManager.shared.fetchData(endpoint: "weather", queryItems: queryItems) { [weak self] (result: CurrentWeatherResult?) in
-            guard let self, let result else { return }
-            DispatchQueue.main.async {
-                self.tempLabel.text = "\(Int(result.main.temp))"
-                self.tempMinLabel.text = "L: \(Int(result.main.tempMin))°"
-                self.tempMaxLabel.text = "H: \(Int(result.main.tempMax))°"
+        WeatherAPIManager.shared.fetchWeatherData(lat: 37.5, lon: 126.9) { result in
+            switch result {
+            case .success(let weatherData):
+                print("weather: \(weatherData.weather.first?.main ?? "Unknown")")
+                print("city: \(weatherData.name)")
+                print("Temperature: \(weatherData.main.temp)°C")
+                DispatchQueue.main.async {
+                    self.titleLabel.text = weatherData.name
+                    self.tempLabel.text = "\(Int(weatherData.main.temp))"
+                    self.tempMinLabel.text = "L: \(Int(weatherData.main.tempMin))°"
+                    self.tempMaxLabel.text = "H: \(Int(weatherData.main.tempMax))°"
+                }
+            case .failure(let error):
+                print("Error fetching weather data: \(error.localizedDescription)")
             }
         }
     }
