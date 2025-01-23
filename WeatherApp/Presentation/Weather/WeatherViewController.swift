@@ -14,17 +14,6 @@ class WeatherViewController: UIViewController {
 
     private var dataSource = [ForecastWeather]()
     
-    private let apiKey = Bundle.main.weatherKey
-    
-    // URL 쿼리 아이템들.
-    // 서울역 위경도.
-    private lazy var urlQueryItems: [URLQueryItem] = [
-        URLQueryItem(name: "lat", value: "37.5"),
-        URLQueryItem(name: "lon", value: "126.9"),
-        URLQueryItem(name: "appid", value: self.apiKey),
-        URLQueryItem(name: "units", value: "metric")
-    ]
-    
     private let scrollView = UIScrollView().then {
         $0.backgroundColor = .clear
         $0.showsVerticalScrollIndicator = false
@@ -153,96 +142,44 @@ class WeatherViewController: UIViewController {
         super.viewDidLoad()
         setupViews()
         setupConstraints()
-        
-        setupLottieAnimations()
-        
         updateThme(for: "sunny")
-        fetchCurrentWeatherData()
-//        fetchForecastData()
+        setupLottieAnimations()
+        fetchCurrentWeather()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        leftAnimationView.stop()
+        rightAnimationView.stop()
     }
     
     private func setupLottieAnimations() {
-        leftAnimationView.contentMode = .scaleAspectFit
-        leftAnimationView.loopMode = .loop
-        leftAnimationView.animationSpeed = 0.5
-        
-        rightAnimationView.contentMode = .scaleAspectFit
-        rightAnimationView.loopMode = .loop
-        rightAnimationView.animationSpeed = 0.5
-        
-        leftAnimationView.play()
-        rightAnimationView.play()
+        configureLottieView(leftAnimationView)
+        configureLottieView(rightAnimationView)
     }
     
-    // 서버 데이터 불러오는 메서드
-    /// 제네릭: T에는 Decodable을 준수하는 어떤 타입이든 들어올 수 있다.
-    /// @escaping: 메서드가 끝이 나더라도 탈출하여 언제든지 실행되는 클로저
-    private func fetchData<T: Decodable>(url: URL, completion: @escaping (T?) -> Void) {
-        let session = URLSession(configuration: .default)
-        session.dataTask(with: URLRequest(url: url)){data, response, error in
-            guard let data, error == nil else {
-                print("데이터 로드 실패")
-                completion(nil)
-                return
-            }
-            // http status code 성공범위는 200번대.
-            let successRange = 200..<399
-            if let response = response as? HTTPURLResponse, successRange.contains(response.statusCode) {
-                guard let decodeData = try? JSONDecoder().decode(T.self, from: data) else {
-                    print("JSON 디코딩 실패")
-                    completion(nil)
-                    return
+    private func configureLottieView(_ animationView: LottieAnimationView) {
+        animationView.contentMode = .scaleAspectFit
+        animationView.loopMode = .loop
+        animationView.animationSpeed = 1.0
+        animationView.play()
+    }
+    
+    private func fetchCurrentWeather() {
+        WeatherAPIManager.shared.fetchWeatherData(lat: 37.5, lon: 126.9) { result in
+            switch result {
+            case .success(let weatherData):
+                print("weather: \(weatherData.weather.first?.main ?? "Unknown")")
+                print("city: \(weatherData.name)")
+                print("Temperature: \(weatherData.main.temp)°C")
+                DispatchQueue.main.async {
+                    self.titleLabel.text = weatherData.name
+                    self.tempLabel.text = "\(Int(weatherData.main.temp))"
+                    self.tempMinLabel.text = "L: \(Int(weatherData.main.tempMin))°"
+                    self.tempMaxLabel.text = "H: \(Int(weatherData.main.tempMax))°"
                 }
-                completion(decodeData)
-            } else {
-                print("응답 오류")
-                completion(nil)
-            }
-        }.resume()
-    }
-    
-    // 서버에서 현재 날씨 데이터를 불러오는 메서드.
-    private func fetchCurrentWeatherData() {
-        var urlComponents = URLComponents(string: "https://api.openweathermap.org/data/2.5/weather")
-        urlComponents?.queryItems = self.urlQueryItems
-        
-        guard let url = urlComponents?.url else {
-            print("잘못된 URL")
-            return
-        }
-        
-        fetchData(url: url) { [weak self] (result: CurrentWeatherResult?) in
-            guard let self, let result else { return }
-            // UI 작업은 메인 쓰레드에서 작업
-            DispatchQueue.main.async {
-                self.tempLabel.text = "\(Int(result.main.temp))"
-                self.tempMinLabel.text = "L: \(Int(result.main.tempMin))°"
-                self.tempMaxLabel.text = "H: \(Int(result.main.tempMax))°"
-            }
-        }
-    }
-    
-    // 서버에서 5일 간 날씨 예보 데이터를 불러오는 메서드
-    private func fetchForecastData() {
-        var urlComponents = URLComponents(string: "https://api.openweathermap.org/data/2.5/forecast")
-        urlComponents?.queryItems = self.urlQueryItems
-        
-        guard let url = urlComponents?.url else {
-            print("잘못된 URL")
-            return
-        }
-        
-        fetchData(url: url) { [weak self] (result: ForecastWeatherResult?) in
-            guard let self, let result else { return }
-            
-            // result 콘솔에 찍어보기
-            for forecastWeather in result.list {
-                print("\(forecastWeather.main)\n\(forecastWeather.dtTxt)\n\n")
-            }
-            
-            DispatchQueue.main.async {
-                self.dataSource = result.list
-                self.tableView.reloadData()
+            case .failure(let error):
+                print("Error fetching weather data: \(error.localizedDescription)")
             }
         }
     }
