@@ -5,7 +5,7 @@
 //  Created by 정유진 on 12/10/24.
 //
 
-import Foundation
+import UIKit
 
 final class WeatherThemeManager {
     static let shared = WeatherThemeManager() // 싱글톤 패턴
@@ -79,4 +79,22 @@ final class WeatherThemeManager {
         }
     }
     
+}
+
+struct WeatherIconManager {
+    
+    static func getSystemIconName(_ iconCode: String) -> String {
+        switch iconCode {
+        case "01d": return "sun.max.fill"     // 맑은 낮
+        case "01n": return "moon.stars.fill"  // 맑은 밤
+        case "02d", "02n": return "cloud.sun.fill" // 약간 흐림
+        case "03d", "03n": return "cloud.fill" // 흐림
+        case "09d", "09n": return "cloud.drizzle.fill" // 이슬비
+        case "10d", "10n": return "cloud.rain.fill"  // 비
+        case "11d", "11n": return "cloud.bolt.fill"  // 천둥번개
+        case "13d", "13n": return "snow"      // 눈
+        case "50d", "50n": return "cloud.fog.fill"  // 안개
+        default: return "cloud"              // 기본값
+        }
+    }
 }
