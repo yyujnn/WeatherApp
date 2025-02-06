@@ -13,6 +13,7 @@ import Then
 class WeatherViewController: UIViewController {
 
     private var dataSource = [ForecastWeather]()
+    private var houlyData = [HourlyWeather]()
     
     private let scrollView = UIScrollView().then {
         $0.backgroundColor = .clear
@@ -145,6 +146,7 @@ class WeatherViewController: UIViewController {
         updateThme(for: "sunny")
         setupLottieAnimations()
         fetchCurrentWeather()
+        fetchHourlyForecast()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -166,18 +168,30 @@ class WeatherViewController: UIViewController {
     }
     
     private func fetchCurrentWeather() {
-        WeatherAPIManager.shared.fetchWeatherData(lat: 37.5, lon: 126.9) { result in
+        WeatherAPIManager.shared.fetchCurrentWeather(lat: 37.5, lon: 126.9) { result in
             switch result {
-            case .success(let weatherData):
-                print("weather: \(weatherData.weather.first?.main ?? "Unknown")")
-                print("city: \(weatherData.name)")
-                print("Temperature: \(weatherData.main.temp)°C")
+            case .success(let data):
+                print("weather: \(data.weather.first?.main ?? "Unknown")")
+                print("city: \(data.name)")
+                print("Temperature: \(data.main.temp)°C")
                 DispatchQueue.main.async {
-                    self.titleLabel.text = weatherData.name
-                    self.tempLabel.text = "\(Int(weatherData.main.temp))"
-                    self.tempMinLabel.text = "L: \(Int(weatherData.main.tempMin))°"
-                    self.tempMaxLabel.text = "H: \(Int(weatherData.main.tempMax))°"
+                    self.titleLabel.text = data.name
+                    self.tempLabel.text = "\(Int(data.main.temp))"
+                    self.tempMinLabel.text = "L: \(Int(data.main.tempMin))°"
+                    self.tempMaxLabel.text = "H: \(Int(data.main.tempMax))°"
                 }
+            case .failure(let error):
+                print("Error fetching weather data: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    private func fetchHourlyForecast() {
+        WeatherAPIManager.shared.fetchHourlyWeather(lat: 37.5, lon: 126.9) { result in
+            switch result {
+            case .success(let data):
+                print("Hourly: \(data)")
+                self.houlyData = data.list
             case .failure(let error):
                 print("Error fetching weather data: \(error.localizedDescription)")
             }
