@@ -192,6 +192,7 @@ class WeatherViewController: UIViewController {
             case .success(let data):
                 print("Hourly: \(data)")
                 self.houlyData = data.list
+                self.collectionView.reloadData()
             case .failure(let error):
                 print("Error fetching weather data: \(error.localizedDescription)")
             }
@@ -355,13 +356,14 @@ class WeatherViewController: UIViewController {
 }
 extension WeatherViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        return houlyData.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HourlyForecastCell.identifier, for: indexPath) as? HourlyForecastCell else { return UICollectionViewCell() }
         
-        cell.configure(time: "15:00", temperature: "\(indexPath.item)", iconName: "sun.max.fill")
+        let weather = houlyData[indexPath.item]
+        cell.configure(weather: weather)
         
         return cell
     }

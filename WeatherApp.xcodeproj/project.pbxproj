@@ -244,8 +244,8 @@
 		F3AB5A602D08578200A88985 /* Service */ = {
 			isa = PBXGroup;
 			children = (
-				F3AB5A612D0857D200A88985 /* WeatherThemeManager.swift */,
 				F3378A182D37AF11006168D7 /* WeatherAPIManager.swift */,
+				F3AB5A612D0857D200A88985 /* WeatherThemeManager.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
