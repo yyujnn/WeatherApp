@@ -12,7 +12,13 @@ struct HourlyWeatherResult: Codable {
 }
 
 struct HourlyWeather: Codable {
-    let dt: Int
+    let dtTxt: String
     let main: WeatherMain
     let weather: [Weather]
+    
+    enum CodingKeys: String, CodingKey {
+        case dtTxt = "dt_txt"
+        case main
+        case weather
+    }
 }
