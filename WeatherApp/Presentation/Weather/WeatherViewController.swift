@@ -190,8 +190,23 @@ class WeatherViewController: UIViewController {
         WeatherAPIManager.shared.fetchHourlyWeather(lat: 37.5, lon: 126.9) { result in
             switch result {
             case .success(let data):
-                print("Hourly: \(data)")
-                self.houlyData = data.list
+//                print("Hourly: \(data)")
+                
+                let currentDate = Date()
+                let calendar = Calendar.current
+                let futureDate = calendar.date(byAdding: .hour, value: 27, to: currentDate)!
+                print("currentDate: \(currentDate)")
+                
+                self.houlyData = data.list.filter { weather in
+                    if let date = weather.date {  
+                        // date 속성이 Date 타입이어야 함
+                        return date > currentDate && date <= futureDate
+                    }
+                    return false
+                }
+                
+//                self.houlyData = data.list
+                self.houlyData = Array(self.houlyData)
                 self.collectionView.reloadData()
             case .failure(let error):
                 print("Error fetching weather data: \(error.localizedDescription)")
