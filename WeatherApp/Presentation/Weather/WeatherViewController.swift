@@ -192,11 +192,10 @@ class WeatherViewController: UIViewController {
             case .success(let data):
 //                print("Hourly: \(data)")
                 
-                let currentDate = Date()
+                let currentDate = Date().toKST() // 현재 서울 시간
                 let calendar = Calendar.current
                 let futureDate = calendar.date(byAdding: .hour, value: 27, to: currentDate)!
-                print("currentDate: \(currentDate)")
-                
+
                 self.houlyData = data.list.filter { weather in
                     if let date = weather.date {  
                         // date 속성이 Date 타입이어야 함
@@ -205,7 +204,6 @@ class WeatherViewController: UIViewController {
                     return false
                 }
                 
-//                self.houlyData = data.list
                 self.houlyData = Array(self.houlyData)
                 self.collectionView.reloadData()
             case .failure(let error):

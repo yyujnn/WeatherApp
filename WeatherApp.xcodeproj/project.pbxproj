@@ -39,6 +39,7 @@
 		F3AB5A5D2D0595BB00A88985 /* UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AB5A5C2D0595BB00A88985 /* UIView.swift */; };
 		F3AB5A5F2D0834BF00A88985 /* WeatherTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AB5A5E2D0834BF00A88985 /* WeatherTheme.swift */; };
 		F3AB5A622D0857D200A88985 /* WeatherThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AB5A612D0857D200A88985 /* WeatherThemeManager.swift */; };
+		F3F8EE282D59D49600AFBF6B /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F8EE272D59D49600AFBF6B /* Date.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -85,6 +86,7 @@
 		F3AB5A5C2D0595BB00A88985 /* UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIView.swift; sourceTree = "<group>"; };
 		F3AB5A5E2D0834BF00A88985 /* WeatherTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherTheme.swift; sourceTree = "<group>"; };
 		F3AB5A612D0857D200A88985 /* WeatherThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherThemeManager.swift; sourceTree = "<group>"; };
+		F3F8EE272D59D49600AFBF6B /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -236,6 +238,7 @@
 			isa = PBXGroup;
 			children = (
 				F3AB5A5C2D0595BB00A88985 /* UIView.swift */,
+				F3F8EE272D59D49600AFBF6B /* Date.swift */,
 				F3378A162D365A47006168D7 /* Bundle.swift */,
 			);
 			path = Extension;
@@ -347,6 +350,7 @@
 				F3AB5A5D2D0595BB00A88985 /* UIView.swift in Sources */,
 				F3378A172D365A47006168D7 /* Bundle.swift in Sources */,
 				F3AB5A572D031B8F00A88985 /* HourlyForecastCell.swift in Sources */,
+				F3F8EE282D59D49600AFBF6B /* Date.swift in Sources */,
 				F31A49F02D422DF1005739FE /* HourlyWeatherResult.swift in Sources */,
 				F3742EE72CAFCE4E00E062E0 /* ForecastWeatherResult.swift in Sources */,
 				F3AB5A5F2D0834BF00A88985 /* WeatherTheme.swift in Sources */,
