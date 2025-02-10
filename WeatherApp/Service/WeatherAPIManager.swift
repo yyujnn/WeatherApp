@@ -29,8 +29,8 @@ class WeatherAPIManager {
         return urlComponents?.url
     }
     
-    // MARK: - Generic Fetch
-    func fetchWeatherData(lat: Double, lon: Double, completion: @escaping (Result<CurrentWeatherResult, Error>) -> Void) {
+    // MARK: - Fetch Current Weather Data
+    func fetchCurrentWeather(lat: Double, lon: Double, completion: @escaping (Result<CurrentWeatherResult, Error>) -> Void) {
         
         let additionalQueryItems = [
             URLQueryItem(name: "lat", value: "\(lat)"),
@@ -53,4 +53,28 @@ class WeatherAPIManager {
             }
         }
     }
+    
+    // MARK: - Fetch Hourly Weather Data
+    func fetchHourlyWeather(lat: Double, lon: Double, completion: @escaping (Result<HourlyWeatherResult, Error>) -> Void) {
+        
+        let additionalQueryItems = [
+            URLQueryItem(name: "lat", value: "\(lat)"),
+            URLQueryItem(name: "lon", value: "\(lon)")
+        ]
+        
+        guard let url = makeURL(endpoint: "forecast", queryItems: additionalQueryItems) else {
+            completion(.failure(NSError(domain: "InvalidURL", code: -1, userInfo: nil)))
+            return
+        }
+
+        AF.request(url, method: .get).responseDecodable(of: HourlyWeatherResult.self) { response in
+            switch response.result {
+            case .success(let hourlyData):
+                completion(.success(hourlyData))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
 }

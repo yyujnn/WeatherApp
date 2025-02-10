@@ -24,7 +24,7 @@ class HourlyForecastCell: UICollectionViewCell {
     }
     
     private let temperatureLabel = UILabel().then {
-        $0.font = Gabarito.regular.of(size: 16)
+        $0.font = Gabarito.regular.of(size: 18)
         $0.textColor = .white
         $0.textAlignment = .center
     }
@@ -48,11 +48,10 @@ class HourlyForecastCell: UICollectionViewCell {
         iconImageView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.centerY.equalToSuperview()
-            $0.width.height.equalTo(30)
+            $0.width.height.equalTo(26)
         }
         
         temperatureLabel.snp.makeConstraints {
-            $0.top.equalTo(iconImageView.snp.bottom).offset(4)
             $0.centerX.equalToSuperview()
             $0.bottom.equalToSuperview()
         }
@@ -61,10 +60,21 @@ class HourlyForecastCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    func configure(weather: HourlyWeather) {
+        // "2024-02-07 15:00:00" -> "15:00"
+        let time = String(weather.dtTxt.split(separator: " ")[1].prefix(5))
+        let temperature = "\(Int(weather.main.temp))°"
+        let iconCode = weather.weather.first?.icon ?? ""
 
-    func configure(time: String, temperature: String, iconName: String) {
+        configure(time: time, temperature: temperature, iconCode: iconCode)
+    }
+    
+    func configure(time: String, temperature: String, iconCode: String) {
         timeLabel.text = time
         temperatureLabel.text = temperature
+        
+        let iconName = WeatherIconManager.getSystemIconName(iconCode)
         iconImageView.image = UIImage(systemName: iconName)
     }
 }
