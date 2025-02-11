@@ -6,6 +6,7 @@
 //
 
 import Alamofire
+import Combine
 import Foundation
 
 class WeatherAPIManager {
@@ -30,32 +31,27 @@ class WeatherAPIManager {
     }
     
     // MARK: - Fetch Current Weather Data
-    func fetchCurrentWeather(lat: Double, lon: Double, completion: @escaping (Result<CurrentWeatherResult, Error>) -> Void) {
+    func fetchCurrentWeather(lat: Double, lon: Double) -> AnyPublisher<CurrentWeatherResult, Error> {
         
         let additionalQueryItems = [
             URLQueryItem(name: "lat", value: "\(lat)"),
             URLQueryItem(name: "lon", value: "\(lon)")
         ]
         
-        // URL 생성
         guard let url = makeURL(endpoint: "weather", queryItems: additionalQueryItems) else {
-            completion(.failure(NSError(domain: "InvalidURL", code: -1, userInfo: nil)))
-            return
+            return Fail(error: URLError(.badURL))
+                .eraseToAnyPublisher()
         }
         
-        // Alamofire 요청
-        AF.request(url, method: .get).responseDecodable(of: CurrentWeatherResult.self) { response in
-            switch response.result {
-            case .success(let weatherData):
-                completion(.success(weatherData))
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
+        return AF.request(url)
+            .publishDecodable(type: CurrentWeatherResult.self)
+            .value() // 성공 시 데이터만 반환
+            .mapError { $0 as Error } // 에러 처리
+            .eraseToAnyPublisher() // 타입 숨기기
     }
     
     // MARK: - Fetch Hourly Weather Data
-    func fetchHourlyWeather(lat: Double, lon: Double, completion: @escaping (Result<HourlyWeatherResult, Error>) -> Void) {
+    func fetchHourlyWeather(lat: Double, lon: Double) -> AnyPublisher<HourlyWeatherResult, Error> {
         
         let additionalQueryItems = [
             URLQueryItem(name: "lat", value: "\(lat)"),
@@ -63,18 +59,14 @@ class WeatherAPIManager {
         ]
         
         guard let url = makeURL(endpoint: "forecast", queryItems: additionalQueryItems) else {
-            completion(.failure(NSError(domain: "InvalidURL", code: -1, userInfo: nil)))
-            return
+            return Fail(error: URLError(.badURL))
+                .eraseToAnyPublisher()
         }
-
-        AF.request(url, method: .get).responseDecodable(of: HourlyWeatherResult.self) { response in
-            switch response.result {
-            case .success(let hourlyData):
-                completion(.success(hourlyData))
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
+        
+        return AF.request(url)
+            .publishDecodable(type: HourlyWeatherResult.self)
+            .value()
+            .mapError { $0 as Error }
+            .eraseToAnyPublisher()
     }
-    
 }
