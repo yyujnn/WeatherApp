@@ -40,6 +40,7 @@
 		F3AB5A5F2D0834BF00A88985 /* WeatherTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AB5A5E2D0834BF00A88985 /* WeatherTheme.swift */; };
 		F3AB5A622D0857D200A88985 /* WeatherThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3AB5A612D0857D200A88985 /* WeatherThemeManager.swift */; };
 		F3F8EE282D59D49600AFBF6B /* Date.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F8EE272D59D49600AFBF6B /* Date.swift */; };
+		F3F8EE2A2D59E31F00AFBF6B /* WeatherViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F8EE292D59E31F00AFBF6B /* WeatherViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -87,6 +88,7 @@
 		F3AB5A5E2D0834BF00A88985 /* WeatherTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherTheme.swift; sourceTree = "<group>"; };
 		F3AB5A612D0857D200A88985 /* WeatherThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherThemeManager.swift; sourceTree = "<group>"; };
 		F3F8EE272D59D49600AFBF6B /* Date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Date.swift; sourceTree = "<group>"; };
+		F3F8EE292D59E31F00AFBF6B /* WeatherViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -156,6 +158,7 @@
 		F36673E52CE5F2F3008C2D42 /* Weather */ = {
 			isa = PBXGroup;
 			children = (
+				F3F8EE292D59E31F00AFBF6B /* WeatherViewModel.swift */,
 				F359DD382C8EEBE900F51E40 /* WeatherViewController.swift */,
 				F36673E82CEB24F2008C2D42 /* TabBarViewController.swift */,
 				F3AB5A552D031A4A00A88985 /* Cell */,
@@ -358,6 +361,7 @@
 				F36673EF2CEB2947008C2D42 /* SearchViewController.swift in Sources */,
 				F359DD392C8EEBE900F51E40 /* WeatherViewController.swift in Sources */,
 				F359DD352C8EEBE900F51E40 /* AppDelegate.swift in Sources */,
+				F3F8EE2A2D59E31F00AFBF6B /* WeatherViewModel.swift in Sources */,
 				F36673FF2CEB3024008C2D42 /* Font.swift in Sources */,
 				F3742EE92CAFCE6000E062E0 /* WeeklyForecastCell.swift in Sources */,
 				F36673E92CEB24F2008C2D42 /* TabBarViewController.swift in Sources */,

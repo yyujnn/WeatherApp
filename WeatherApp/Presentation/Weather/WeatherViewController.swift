@@ -6,12 +6,15 @@
 //
 
 import UIKit
+import Combine
 import Lottie
 import SnapKit
 import Then
 
 class WeatherViewController: UIViewController {
 
+    private var viewModel = WeatherViewModel()
+    private var cancellables = Set<AnyCancellable>()
     private var dataSource = [ForecastWeather]()
     private var houlyData = [HourlyWeather]()
     
@@ -27,15 +30,15 @@ class WeatherViewController: UIViewController {
     private let leftAnimationView = LottieAnimationView()
     private let rightAnimationView = LottieAnimationView()
     
-    private let titleLabel = UILabel().then {
-        $0.text = "Seoul"
+    private let cityLabel = UILabel().then {
+        $0.text = "Loading..."
         $0.textColor = .sunnyFont
         $0.font = Gabarito.regular.of(size: 30)
     }
     
     private let tempLabel = UILabel().then {
         $0.textColor = .sunnyFont
-        $0.text = "20"
+        $0.text = "--"
         $0.font = Gabarito.medium.of(size: 100)
     }
     
@@ -47,19 +50,19 @@ class WeatherViewController: UIViewController {
     
     private let stateLabel = UILabel().then {
         $0.textColor = .sunnyFont
-        $0.text = "Sunny"
+        $0.text = "--"
         $0.font = Gabarito.regular.of(size: 26)
     }
     
     private let tempMinLabel = UILabel().then {
         $0.textColor = .sunnyFont
-        $0.text = "L: 20°"
+        $0.text = "L: --°"
         $0.font = Gabarito.semibold.of(size: 20)
     }
     
     private let tempMaxLabel = UILabel().then {
         $0.textColor = .sunnyFont
-        $0.text = "H: 20°"
+        $0.text = "H: --°"
         $0.font = Gabarito.semibold.of(size: 20)
     }
     
@@ -145,8 +148,8 @@ class WeatherViewController: UIViewController {
         setupConstraints()
         updateThme(for: "sunny")
         setupLottieAnimations()
-        fetchCurrentWeather()
-        fetchHourlyForecast()
+        setupBindings()
+        viewModel.fetchWeatherData(lat: 37.5, lon: 126.9) // 서울 좌표
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -154,6 +157,65 @@ class WeatherViewController: UIViewController {
         leftAnimationView.stop()
         rightAnimationView.stop()
     }
+    
+    private func setupBindings() {
+        // 현재 날씨 데이터 바인딩
+        viewModel.$currentWeather
+            .compactMap { $0 } // nil 값 필터링
+            .sink { [weak self] weatherData in
+                self?.updateCurrentWeatherUI(data: weatherData)
+            }
+            .store(in: &cancellables)
+        
+        // 시간별 날씨 데이터 바인딩
+        viewModel.$hourlyWeather
+            .compactMap { $0 }
+            .sink { [weak self] hourlyData in
+                self?.updateHourlyWeatherUI(data: hourlyData)
+            }
+            .store(in: &cancellables)
+        
+        // 에러 메시지 바인딩
+        viewModel.$errorMessage
+            .compactMap { $0 } // nil 값은 무시
+            .sink { [weak self] errorMessage in
+                self?.showErrorAlert(message: errorMessage)
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func updateCurrentWeatherUI(data: CurrentWeatherResult) {
+        tempLabel.text = "\(Int(data.main.temp))"
+        self.cityLabel.text = data.name
+        self.tempLabel.text = "\(Int(data.main.temp))"
+        self.tempMinLabel.text = "L: \(Int(data.main.tempMin))°"
+        self.tempMaxLabel.text = "H: \(Int(data.main.tempMax))°"
+    }
+    
+    private func updateHourlyWeatherUI(data: HourlyWeatherResult) {
+        let currentDate = Date().toKST() // 현재 서울 시간
+        let calendar = Calendar.current
+        let futureDate = calendar.date(byAdding: .hour, value: 27, to: currentDate)!
+
+        self.houlyData = data.list.filter { weather in
+            if let date = weather.date {
+                // date 속성이 Date 타입이어야 함
+                return date > currentDate && date <= futureDate
+            }
+            return false
+        }
+        
+        self.houlyData = Array(self.houlyData)
+        // 시간별 날씨 데이터를 collectionView에 적용 (reloadData 호출)
+        collectionView.reloadData()
+    }
+    
+    private func showErrorAlert(message: String) {
+        let alert = UIAlertController(title: "오류", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .default))
+        present(alert, animated: true)
+    }
+    
     
     private func setupLottieAnimations() {
         configureLottieView(leftAnimationView)
@@ -167,51 +229,6 @@ class WeatherViewController: UIViewController {
         animationView.play()
     }
     
-    private func fetchCurrentWeather() {
-        WeatherAPIManager.shared.fetchCurrentWeather(lat: 37.5, lon: 126.9) { result in
-            switch result {
-            case .success(let data):
-                print("weather: \(data.weather.first?.main ?? "Unknown")")
-                print("city: \(data.name)")
-                print("Temperature: \(data.main.temp)°C")
-                DispatchQueue.main.async {
-                    self.titleLabel.text = data.name
-                    self.tempLabel.text = "\(Int(data.main.temp))"
-                    self.tempMinLabel.text = "L: \(Int(data.main.tempMin))°"
-                    self.tempMaxLabel.text = "H: \(Int(data.main.tempMax))°"
-                }
-            case .failure(let error):
-                print("Error fetching weather data: \(error.localizedDescription)")
-            }
-        }
-    }
-    
-    private func fetchHourlyForecast() {
-        WeatherAPIManager.shared.fetchHourlyWeather(lat: 37.5, lon: 126.9) { result in
-            switch result {
-            case .success(let data):
-//                print("Hourly: \(data)")
-                
-                let currentDate = Date().toKST() // 현재 서울 시간
-                let calendar = Calendar.current
-                let futureDate = calendar.date(byAdding: .hour, value: 27, to: currentDate)!
-
-                self.houlyData = data.list.filter { weather in
-                    if let date = weather.date {  
-                        // date 속성이 Date 타입이어야 함
-                        return date > currentDate && date <= futureDate
-                    }
-                    return false
-                }
-                
-                self.houlyData = Array(self.houlyData)
-                self.collectionView.reloadData()
-            case .failure(let error):
-                print("Error fetching weather data: \(error.localizedDescription)")
-            }
-        }
-    }
-    
     private func setupViews() {
         view.backgroundColor = .sunnyBackground
         
@@ -219,7 +236,7 @@ class WeatherViewController: UIViewController {
         
         scrollView.addSubview(contentView)
         
-        contentView.addSubviews(titleLabel,
+        contentView.addSubviews(cityLabel,
                          tempLabel,
                          degreeLabel,
                          stateLabel,
@@ -249,14 +266,14 @@ class WeatherViewController: UIViewController {
             $0.bottom.equalTo(weeklyForecastView.snp.bottom).offset(16)
         }
         
-        titleLabel.snp.makeConstraints {
+        cityLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.top.equalToSuperview()
         }
         
         tempLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalTo(titleLabel.snp.bottom).offset(14)
+            $0.top.equalTo(cityLabel.snp.bottom).offset(14)
         }
         
         degreeLabel.snp.makeConstraints {
@@ -275,7 +292,7 @@ class WeatherViewController: UIViewController {
         }
         
         leftAnimationView.snp.makeConstraints {
-            $0.top.equalTo(titleLabel)
+            $0.top.equalTo(cityLabel)
             $0.leading.equalToSuperview().offset(-20)
             $0.width.height.equalTo(120)
         }
@@ -350,7 +367,7 @@ class WeatherViewController: UIViewController {
         let theme = WeatherThemeManager.shared.updateTheme(for: weather)
         
         view.backgroundColor = theme.backgroundColor
-        titleLabel.textColor = theme.fontColor
+        cityLabel.textColor = theme.fontColor
         tempLabel.textColor = theme.fontColor
         degreeLabel.textColor = theme.fontColor
         stateLabel.textColor = theme.fontColor
