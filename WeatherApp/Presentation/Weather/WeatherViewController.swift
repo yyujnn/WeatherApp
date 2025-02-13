@@ -149,9 +149,8 @@ class WeatherViewController: UIViewController {
         setupConstraints()
         updateThme(for: "sunny")
         setupLottieAnimations()
-        setupBindings()
-        viewModel.fetchWeatherData(lat: 37.5, lon: 126.9) // 서울 좌표
         bindLocationUpdates()
+        bindWeatherUpdates()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -165,17 +164,17 @@ class WeatherViewController: UIViewController {
         locationManager.$currentLocation
             .compactMap { $0 }  // nil 값 필터링
             .sink { [weak self] location in
-                self?.viewModel.fetchWeather(location: location)  // 위치 정보로 날씨 요청
+                self?.viewModel.fetchWeatherData(location: location)  // 위치 정보로 날씨 요청
             }
             .store(in: &cancellables)
     }
     
-    private func setupBindings() {
+    private func bindWeatherUpdates() {
         // 현재 날씨 데이터 바인딩
         viewModel.$currentWeather
             .compactMap { $0 } // nil 값 필터링
-            .sink { [weak self] weatherData in
-                self?.updateCurrentWeatherUI(data: weatherData)
+            .sink { [weak self] currentData in
+                self?.updateCurrentWeatherUI(data: currentData)
             }
             .store(in: &cancellables)
         

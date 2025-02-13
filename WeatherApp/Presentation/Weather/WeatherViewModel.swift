@@ -17,16 +17,12 @@ class WeatherViewModel {
     
     private var cancellables = Set<AnyCancellable>()
     
-    func fetchWeather(location: CLLocation) {
+    // 위치 정보 받아서 날씨 데이터 요청
+    func fetchWeatherData(location: CLLocation) {
         let lat = location.coordinate.latitude
         let lon = location.coordinate.longitude
-        
         print("location: (\(lat), \(lon))")
-    }
-    
-    
-    // API 호출
-    func fetchWeatherData(lat: Double, lon: Double) {
+        
         // 현재 날씨 데이터 가져오기
         WeatherAPIManager.shared.fetchCurrentWeather(lat: lat, lon: lon)
             .receive(on: DispatchQueue.main) // UI 업데이트를 위해 메인 스레드로 전환
