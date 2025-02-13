@@ -14,6 +14,7 @@ import Then
 class WeatherViewController: UIViewController {
 
     private var viewModel = WeatherViewModel()
+    private var locationManager = LocationManager()
     private var cancellables = Set<AnyCancellable>()
     private var dataSource = [ForecastWeather]()
     private var houlyData = [HourlyWeather]()
@@ -148,8 +149,8 @@ class WeatherViewController: UIViewController {
         setupConstraints()
         updateThme(for: "sunny")
         setupLottieAnimations()
-        setupBindings()
-        viewModel.fetchWeatherData(lat: 37.5, lon: 126.9) // 서울 좌표
+        bindLocationUpdates()
+        bindWeatherUpdates()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -158,12 +159,22 @@ class WeatherViewController: UIViewController {
         rightAnimationView.stop()
     }
     
-    private func setupBindings() {
+    // 위치 업데이트 바인딩
+    private func bindLocationUpdates() {
+        locationManager.$currentLocation
+            .compactMap { $0 }  // nil 값 필터링
+            .sink { [weak self] location in
+                self?.viewModel.fetchWeatherData(location: location)  // 위치 정보로 날씨 요청
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func bindWeatherUpdates() {
         // 현재 날씨 데이터 바인딩
         viewModel.$currentWeather
             .compactMap { $0 } // nil 값 필터링
-            .sink { [weak self] weatherData in
-                self?.updateCurrentWeatherUI(data: weatherData)
+            .sink { [weak self] currentData in
+                self?.updateCurrentWeatherUI(data: currentData)
             }
             .store(in: &cancellables)
         
