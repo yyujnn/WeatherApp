@@ -13,7 +13,7 @@ class LocationManager: NSObject {
     private let locationManager = CLLocationManager()
     
     @Published var currentLocation: CLLocation?
-    @Published var authoricationStatus: CLAuthorizationStatus?
+    @Published var authorizationStatus: CLAuthorizationStatus?
     
     override init() {
         super.init()
@@ -30,7 +30,16 @@ class LocationManager: NSObject {
 extension LocationManager: CLLocationManagerDelegate {
     // 위치 권한 상태 변경 시 호출
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        self.authorizationStatus = status
         
+        switch status {
+        case .authorizedWhenInUse, .authorizedAlways:
+            locationManager.startUpdatingLocation()
+        case .denied, .restricted:
+            print("위치 권한이 거부되었습니다.")
+        default:
+            break
+        }
     }
     
    // 위치 업데이트 시 호출
