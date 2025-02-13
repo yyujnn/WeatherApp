@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import CoreLocation
 import Combine
 
 class WeatherViewModel {
@@ -15,6 +16,14 @@ class WeatherViewModel {
     @Published var errorMessage: String?
     
     private var cancellables = Set<AnyCancellable>()
+    
+    func fetchWeather(location: CLLocation) {
+        let lat = location.coordinate.latitude
+        let lon = location.coordinate.longitude
+        
+        print("location: (\(lat), \(lon))")
+    }
+    
     
     // API 호출
     func fetchWeatherData(lat: Double, lon: Double) {
