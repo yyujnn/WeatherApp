@@ -17,7 +17,7 @@ class WeatherViewController: UIViewController {
     private var locationManager = LocationManager()
     private var cancellables = Set<AnyCancellable>()
     private var dataSource = [ForecastWeather]()
-    private var houlyData = [HourlyWeather]()
+    private var hourlyData = [HourlyWeather]()
     
     private let scrollView = UIScrollView().then {
         $0.backgroundColor = .clear
@@ -85,7 +85,7 @@ class WeatherViewController: UIViewController {
         $0.tintColor = .sunnyFont
     }
     
-    private let hourLable = UILabel().then {
+    private let hourLabel = UILabel().then {
         $0.text = "Hourly Forecast"
         $0.font = Gabarito.regular.of(size: 14)
         $0.textColor = .sunnyFont
@@ -107,7 +107,7 @@ class WeatherViewController: UIViewController {
         $0.tintColor = .sunnyFont
     }
     
-    private let weekLable = UILabel().then {
+    private let weekLabel = UILabel().then {
         $0.text = "Weekly Forecast"
         $0.font = Gabarito.regular.of(size: 14)
         $0.textColor = .sunnyFont
@@ -147,8 +147,8 @@ class WeatherViewController: UIViewController {
         super.viewDidLoad()
         setupViews()
         setupConstraints()
-        updateThme(for: "sunny")
         setupLottieAnimations()
+        updateThme(for: "sunny")
         bindLocationUpdates()
         bindWeatherUpdates()
     }
@@ -157,6 +157,8 @@ class WeatherViewController: UIViewController {
         super.viewWillDisappear(animated)
         leftAnimationView.stop()
         rightAnimationView.stop()
+        leftAnimationView.removeFromSuperview()
+        rightAnimationView.removeFromSuperview()
     }
     
     // 위치 업데이트 바인딩
@@ -197,10 +199,10 @@ class WeatherViewController: UIViewController {
     
     private func updateCurrentWeatherUI(data: CurrentWeatherResult) {
         tempLabel.text = "\(Int(data.main.temp))"
-        self.cityLabel.text = data.name
-        self.tempLabel.text = "\(Int(data.main.temp))"
-        self.tempMinLabel.text = "L: \(Int(data.main.tempMin))°"
-        self.tempMaxLabel.text = "H: \(Int(data.main.tempMax))°"
+        cityLabel.text = data.name
+        tempLabel.text = "\(Int(data.main.temp))"
+        tempMinLabel.text = "L: \(Int(data.main.tempMin))°"
+        tempMaxLabel.text = "H: \(Int(data.main.tempMax))°"
     }
     
     private func updateHourlyWeatherUI(data: HourlyWeatherResult) {
@@ -208,7 +210,7 @@ class WeatherViewController: UIViewController {
         let calendar = Calendar.current
         let futureDate = calendar.date(byAdding: .hour, value: 27, to: currentDate)!
 
-        self.houlyData = data.list.filter { weather in
+        self.hourlyData = data.list.filter { weather in
             if let date = weather.date {
                 // date 속성이 Date 타입이어야 함
                 return date > currentDate && date <= futureDate
@@ -216,7 +218,7 @@ class WeatherViewController: UIViewController {
             return false
         }
         
-        self.houlyData = Array(self.houlyData)
+        self.hourlyData = Array(self.hourlyData)
         // 시간별 날씨 데이터를 collectionView에 적용 (reloadData 호출)
         collectionView.reloadData()
     }
@@ -260,9 +262,9 @@ class WeatherViewController: UIViewController {
 
         tempStackView.addArrangedSubviews(tempMaxLabel, tempMinLabel)
         
-        hourlyForecastView.addSubviews(clockImageView, hourLable, separatorLine, collectionView)
+        hourlyForecastView.addSubviews(clockImageView, hourLabel, separatorLine, collectionView)
         
-        weeklyForecastView.addSubviews(calendarImageView, weekLable, separatorLine2, tableView)
+        weeklyForecastView.addSubviews(calendarImageView, weekLabel, separatorLine2, tableView)
         
     }
     
@@ -332,7 +334,7 @@ class WeatherViewController: UIViewController {
             $0.width.height.equalTo(20)
         }
         
-        hourLable.snp.makeConstraints {
+        hourLabel.snp.makeConstraints {
             $0.centerY.equalTo(clockImageView)
             $0.leading.equalTo(clockImageView.snp.trailing).offset(4)
         }
@@ -355,7 +357,7 @@ class WeatherViewController: UIViewController {
             $0.width.height.equalTo(20)
         }
         
-        weekLable.snp.makeConstraints {
+        weekLabel.snp.makeConstraints {
             $0.centerY.equalTo(calendarImageView)
             $0.leading.equalTo(calendarImageView.snp.trailing).offset(4)
         }
@@ -386,9 +388,9 @@ class WeatherViewController: UIViewController {
         tempMinLabel.textColor = theme.fontColor
         hourlyForecastView.backgroundColor = theme.pointColor1
         clockImageView.tintColor = theme.fontColor
-        hourLable.textColor = theme.fontColor
+        hourLabel.textColor = theme.fontColor
         calendarImageView.tintColor = theme.fontColor
-        weekLable.textColor = theme.fontColor
+        weekLabel.textColor = theme.fontColor
         weeklyForecastView.backgroundColor = theme.pointColor2
         
         leftAnimationView.animation = LottieAnimation.named(theme.animationName)
@@ -397,13 +399,13 @@ class WeatherViewController: UIViewController {
 }
 extension WeatherViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return houlyData.count
+        return hourlyData.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HourlyForecastCell.identifier, for: indexPath) as? HourlyForecastCell else { return UICollectionViewCell() }
         
-        let weather = houlyData[indexPath.item]
+        let weather = hourlyData[indexPath.item]
         cell.configure(weather: weather)
         
         return cell
