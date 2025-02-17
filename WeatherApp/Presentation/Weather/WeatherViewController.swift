@@ -16,8 +16,8 @@ class WeatherViewController: UIViewController {
     private var viewModel = WeatherViewModel()
     private var locationManager = LocationManager()
     private var cancellables = Set<AnyCancellable>()
-    private var dataSource = [ForecastWeather]()
-    private var hourlyData = [HourlyWeather]()
+    private var hourlyData: [ForecastWeather] = []
+    private var dailyData: [ForecastWeather] = []
     
     private let scrollView = UIScrollView().then {
         $0.backgroundColor = .clear
@@ -188,6 +188,14 @@ class WeatherViewController: UIViewController {
             }
             .store(in: &cancellables)
         
+        // 날짜별 날씨 데이터 바인딩
+        viewModel.$dailyWeather
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] dailyData in
+                self?.updateDailyWeatherUI(data: dailyData)
+            }
+            .store(in: &cancellables)
+        
         // 에러 메시지 바인딩
         viewModel.$errorMessage
             .compactMap { $0 } // nil 값은 무시
@@ -205,22 +213,27 @@ class WeatherViewController: UIViewController {
         tempMaxLabel.text = "H: \(Int(data.main.tempMax))°"
     }
     
-    private func updateHourlyWeatherUI(data: HourlyWeatherResult) {
+    private func updateHourlyWeatherUI(data: ForecastWeatherResult) {
         let currentDate = Date().toKST() // 현재 서울 시간
         let calendar = Calendar.current
         let futureDate = calendar.date(byAdding: .hour, value: 27, to: currentDate)!
 
-        self.hourlyData = data.list.filter { weather in
+        hourlyData = data.list.filter { weather in
             if let date = weather.date {
                 // date 속성이 Date 타입이어야 함
                 return date > currentDate && date <= futureDate
             }
             return false
         }
-        
-        self.hourlyData = Array(self.hourlyData)
-        // 시간별 날씨 데이터를 collectionView에 적용 (reloadData 호출)
-        collectionView.reloadData()
+        hourlyData = Array(self.hourlyData)
+        DispatchQueue.main.async { [weak self] in
+            self?.collectionView.reloadData()
+        }
+    }
+    
+    private func updateDailyWeatherUI(data: [ForecastWeather]) {
+        self.dailyData = data
+        self.tableView.reloadData()
     }
     
     private func showErrorAlert(message: String) {
@@ -424,13 +437,13 @@ extension WeatherViewController: UITableViewDataSource {
     // indexPath: 테이블 뷰의 셀과 섹션을 의미
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: WeeklyForecastCell.identifier) as? WeeklyForecastCell else { return UITableViewCell() }
-        cell.configureCell()
+        cell.configureCell(weather: dailyData[indexPath.row])
         cell.backgroundColor = .clear
         return cell
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 7
+        return dailyData.count
     }
 }
 //#Preview{

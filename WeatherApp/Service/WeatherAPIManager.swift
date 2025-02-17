@@ -50,8 +50,8 @@ class WeatherAPIManager {
             .eraseToAnyPublisher() // 타입 숨기기
     }
     
-    // MARK: - Fetch Hourly Weather Data
-    func fetchHourlyWeather(lat: Double, lon: Double) -> AnyPublisher<HourlyWeatherResult, Error> {
+    // MARK: - Fetch Day Weather Forecast Data
+    func fetchForecastWeather(lat: Double, lon: Double) -> AnyPublisher<ForecastWeatherResult, Error> {
         
         let additionalQueryItems = [
             URLQueryItem(name: "lat", value: "\(lat)"),
@@ -64,7 +64,7 @@ class WeatherAPIManager {
         }
         
         return AF.request(url)
-            .publishDecodable(type: HourlyWeatherResult.self)
+            .publishDecodable(type: ForecastWeatherResult.self)
             .value()
             .mapError { $0 as Error }
             .eraseToAnyPublisher()

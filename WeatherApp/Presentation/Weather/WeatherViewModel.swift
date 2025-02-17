@@ -12,7 +12,8 @@ import Combine
 class WeatherViewModel {
 
     @Published var currentWeather: CurrentWeatherResult?
-    @Published var hourlyWeather: HourlyWeatherResult?
+    @Published var hourlyWeather: ForecastWeatherResult?
+    @Published var dailyWeather: [ForecastWeather] = [] // 가공된 데이터 저장
     @Published var errorMessage: String?
     
     private var cancellables = Set<AnyCancellable>()
@@ -35,15 +36,16 @@ class WeatherViewModel {
             })
             .store(in: &cancellables)
         
-        // 시간별 날씨 데이터 가져오기
-        WeatherAPIManager.shared.fetchHourlyWeather(lat: lat, lon: lon)
+        // 5day 날씨 데이터 가져오기
+        WeatherAPIManager.shared.fetchForecastWeather(lat: lat, lon: lon)
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { [weak self] completion in
                 if case .failure(let error) = completion {
-                    self?.errorMessage = "시간별 날씨 불러오기 실패: \(error.localizedDescription)"
+                    self?.errorMessage = "day 날씨 불러오기 실패: \(error.localizedDescription)"
                 }
-            }, receiveValue: { [weak self] hourlyData in
-                self?.hourlyWeather = hourlyData
+            }, receiveValue: { [weak self] forecastData in
+                self?.hourlyWeather = forecastData
+                self?.dailyWeather = forecastData.list
             })
             .store(in: &cancellables)
     }

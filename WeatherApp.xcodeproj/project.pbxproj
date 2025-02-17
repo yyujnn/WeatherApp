@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F31A49F02D422DF1005739FE /* HourlyWeatherResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = F31A49EF2D422DF1005739FE /* HourlyWeatherResult.swift */; };
 		F3378A152D3655F4006168D7 /* OpenWeatherInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = F3378A142D3655F4006168D7 /* OpenWeatherInfo.plist */; };
 		F3378A172D365A47006168D7 /* Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3378A162D365A47006168D7 /* Bundle.swift */; };
 		F3378A192D37AF11006168D7 /* WeatherAPIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3378A182D37AF11006168D7 /* WeatherAPIManager.swift */; };
@@ -58,7 +57,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		F31A49EF2D422DF1005739FE /* HourlyWeatherResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlyWeatherResult.swift; sourceTree = "<group>"; };
 		F3378A142D3655F4006168D7 /* OpenWeatherInfo.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = OpenWeatherInfo.plist; sourceTree = "<group>"; };
 		F3378A162D365A47006168D7 /* Bundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bundle.swift; sourceTree = "<group>"; };
 		F3378A182D37AF11006168D7 /* WeatherAPIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherAPIManager.swift; sourceTree = "<group>"; };
@@ -142,7 +140,6 @@
 			children = (
 				F3742EE42CAFCE3100E062E0 /* CurrentWeatherResult.swift */,
 				F3742EE62CAFCE4E00E062E0 /* ForecastWeatherResult.swift */,
-				F31A49EF2D422DF1005739FE /* HourlyWeatherResult.swift */,
 				F3AB5A5E2D0834BF00A88985 /* WeatherTheme.swift */,
 			);
 			path = Model;
@@ -357,7 +354,6 @@
 				F3378A172D365A47006168D7 /* Bundle.swift in Sources */,
 				F3AB5A572D031B8F00A88985 /* HourlyForecastCell.swift in Sources */,
 				F3F8EE282D59D49600AFBF6B /* Date.swift in Sources */,
-				F31A49F02D422DF1005739FE /* HourlyWeatherResult.swift in Sources */,
 				F3742EE72CAFCE4E00E062E0 /* ForecastWeatherResult.swift in Sources */,
 				F3AB5A5F2D0834BF00A88985 /* WeatherTheme.swift in Sources */,
 				F3378A192D37AF11006168D7 /* WeatherAPIManager.swift in Sources */,
