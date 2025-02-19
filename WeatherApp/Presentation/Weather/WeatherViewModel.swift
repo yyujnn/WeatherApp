@@ -12,7 +12,7 @@ import Combine
 class WeatherViewModel {
 
     @Published var currentWeather: CurrentWeatherResult?
-    @Published var hourlyWeather: ForecastWeatherResult?
+    @Published var hourlyWeather: [ForecastWeather] = []
     @Published var dailyWeather: [ForecastWeather] = [] // 가공된 데이터 저장
     @Published var errorMessage: String?
     
@@ -44,9 +44,27 @@ class WeatherViewModel {
                     self?.errorMessage = "day 날씨 불러오기 실패: \(error.localizedDescription)"
                 }
             }, receiveValue: { [weak self] forecastData in
-                self?.hourlyWeather = forecastData
-                self?.dailyWeather = forecastData.list
+                self?.updateHourlyWeather(forecastData)
+                self?.updateDailyWeather(forecastData)
             })
             .store(in: &cancellables)
+    }
+    
+    private func updateHourlyWeather(_ forecastData: ForecastWeatherResult) {
+        let currentDate = Date().toKST() // 현재 서울 시간
+        let calendar = Calendar.current
+        let futureDate = calendar.date(byAdding: .hour, value: 27, to: currentDate)!
+
+        // 데이터 가공
+        hourlyWeather = forecastData.list.filter { weather in
+            if let date = weather.date {
+                return date > currentDate && date <= futureDate
+            }
+            return false
+        }
+    }
+    
+    private func updateDailyWeather(_ forecastData: ForecastWeatherResult) {
+        dailyWeather = forecastData.list
     }
 }

@@ -182,9 +182,10 @@ class WeatherViewController: UIViewController {
         
         // 시간별 날씨 데이터 바인딩
         viewModel.$hourlyWeather
-            .compactMap { $0 }
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] hourlyData in
-                self?.updateHourlyWeatherUI(data: hourlyData)
+                self?.hourlyData = hourlyData
+                self?.collectionView.reloadData()
             }
             .store(in: &cancellables)
         
@@ -192,7 +193,8 @@ class WeatherViewController: UIViewController {
         viewModel.$dailyWeather
             .receive(on: DispatchQueue.main)
             .sink { [weak self] dailyData in
-                self?.updateDailyWeatherUI(data: dailyData)
+                self?.dailyData = dailyData
+                self?.tableView.reloadData()
             }
             .store(in: &cancellables)
         
@@ -211,29 +213,6 @@ class WeatherViewController: UIViewController {
         tempLabel.text = "\(Int(data.main.temp))"
         tempMinLabel.text = "L: \(Int(data.main.tempMin))°"
         tempMaxLabel.text = "H: \(Int(data.main.tempMax))°"
-    }
-    
-    private func updateHourlyWeatherUI(data: ForecastWeatherResult) {
-        let currentDate = Date().toKST() // 현재 서울 시간
-        let calendar = Calendar.current
-        let futureDate = calendar.date(byAdding: .hour, value: 27, to: currentDate)!
-
-        hourlyData = data.list.filter { weather in
-            if let date = weather.date {
-                // date 속성이 Date 타입이어야 함
-                return date > currentDate && date <= futureDate
-            }
-            return false
-        }
-        hourlyData = Array(self.hourlyData)
-        DispatchQueue.main.async { [weak self] in
-            self?.collectionView.reloadData()
-        }
-    }
-    
-    private func updateDailyWeatherUI(data: [ForecastWeather]) {
-        self.dailyData = data
-        self.tableView.reloadData()
     }
     
     private func showErrorAlert(message: String) {
