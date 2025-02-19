@@ -61,7 +61,7 @@ class HourlyForecastCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(weather: HourlyWeather) {
+    func configure(weather: ForecastWeather) {
         // "2024-02-07 15:00:00" -> "15:00"
         let time = String(weather.dtTxt.split(separator: " ")[1].prefix(5))
         let temperature = "\(Int(weather.main.temp))°"

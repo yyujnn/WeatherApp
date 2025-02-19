@@ -120,10 +120,10 @@ final class WeeklyForecastCell: UITableViewCell {
         }
     }
     
-    public func configureCell() {
-        dayLabel.text = "Today"
-        tempMinLabel.text = "00°"
-        tempMaxLabel.text = "00°"
+    public func configureCell(weather: ForecastWeather) {
+        dayLabel.text = weather.dtTxt
+        tempMaxLabel.text = String(weather.main.tempMax)
+        tempMinLabel.text = String(weather.main.tempMin)
     }
     
     // 인터페이스 빌더를 통해 셀을 초기화 할 때 사용하는 코드

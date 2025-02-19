@@ -14,9 +14,10 @@ import Then
 class WeatherViewController: UIViewController {
 
     private var viewModel = WeatherViewModel()
+    private var locationManager = LocationManager()
     private var cancellables = Set<AnyCancellable>()
-    private var dataSource = [ForecastWeather]()
-    private var houlyData = [HourlyWeather]()
+    private var hourlyData: [ForecastWeather] = []
+    private var dailyData: [ForecastWeather] = []
     
     private let scrollView = UIScrollView().then {
         $0.backgroundColor = .clear
@@ -84,7 +85,7 @@ class WeatherViewController: UIViewController {
         $0.tintColor = .sunnyFont
     }
     
-    private let hourLable = UILabel().then {
+    private let hourLabel = UILabel().then {
         $0.text = "Hourly Forecast"
         $0.font = Gabarito.regular.of(size: 14)
         $0.textColor = .sunnyFont
@@ -106,7 +107,7 @@ class WeatherViewController: UIViewController {
         $0.tintColor = .sunnyFont
     }
     
-    private let weekLable = UILabel().then {
+    private let weekLabel = UILabel().then {
         $0.text = "Weekly Forecast"
         $0.font = Gabarito.regular.of(size: 14)
         $0.textColor = .sunnyFont
@@ -146,32 +147,54 @@ class WeatherViewController: UIViewController {
         super.viewDidLoad()
         setupViews()
         setupConstraints()
-        updateThme(for: "sunny")
         setupLottieAnimations()
-        setupBindings()
-        viewModel.fetchWeatherData(lat: 37.5, lon: 126.9) // 서울 좌표
+        updateThme(for: "sunny")
+        bindLocationUpdates()
+        bindWeatherUpdates()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         leftAnimationView.stop()
         rightAnimationView.stop()
+        leftAnimationView.removeFromSuperview()
+        rightAnimationView.removeFromSuperview()
     }
     
-    private func setupBindings() {
+    // 위치 업데이트 바인딩
+    private func bindLocationUpdates() {
+        locationManager.$currentLocation
+            .compactMap { $0 }  // nil 값 필터링
+            .sink { [weak self] location in
+                self?.viewModel.fetchWeatherData(location: location)  // 위치 정보로 날씨 요청
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func bindWeatherUpdates() {
         // 현재 날씨 데이터 바인딩
         viewModel.$currentWeather
             .compactMap { $0 } // nil 값 필터링
-            .sink { [weak self] weatherData in
-                self?.updateCurrentWeatherUI(data: weatherData)
+            .sink { [weak self] currentData in
+                self?.updateCurrentWeatherUI(data: currentData)
             }
             .store(in: &cancellables)
         
         // 시간별 날씨 데이터 바인딩
         viewModel.$hourlyWeather
-            .compactMap { $0 }
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] hourlyData in
-                self?.updateHourlyWeatherUI(data: hourlyData)
+                self?.hourlyData = hourlyData
+                self?.collectionView.reloadData()
+            }
+            .store(in: &cancellables)
+        
+        // 날짜별 날씨 데이터 바인딩
+        viewModel.$dailyWeather
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] dailyData in
+                self?.dailyData = dailyData
+                self?.tableView.reloadData()
             }
             .store(in: &cancellables)
         
@@ -186,28 +209,10 @@ class WeatherViewController: UIViewController {
     
     private func updateCurrentWeatherUI(data: CurrentWeatherResult) {
         tempLabel.text = "\(Int(data.main.temp))"
-        self.cityLabel.text = data.name
-        self.tempLabel.text = "\(Int(data.main.temp))"
-        self.tempMinLabel.text = "L: \(Int(data.main.tempMin))°"
-        self.tempMaxLabel.text = "H: \(Int(data.main.tempMax))°"
-    }
-    
-    private func updateHourlyWeatherUI(data: HourlyWeatherResult) {
-        let currentDate = Date().toKST() // 현재 서울 시간
-        let calendar = Calendar.current
-        let futureDate = calendar.date(byAdding: .hour, value: 27, to: currentDate)!
-
-        self.houlyData = data.list.filter { weather in
-            if let date = weather.date {
-                // date 속성이 Date 타입이어야 함
-                return date > currentDate && date <= futureDate
-            }
-            return false
-        }
-        
-        self.houlyData = Array(self.houlyData)
-        // 시간별 날씨 데이터를 collectionView에 적용 (reloadData 호출)
-        collectionView.reloadData()
+        cityLabel.text = data.name
+        tempLabel.text = "\(Int(data.main.temp))"
+        tempMinLabel.text = "L: \(Int(data.main.tempMin))°"
+        tempMaxLabel.text = "H: \(Int(data.main.tempMax))°"
     }
     
     private func showErrorAlert(message: String) {
@@ -249,9 +254,9 @@ class WeatherViewController: UIViewController {
 
         tempStackView.addArrangedSubviews(tempMaxLabel, tempMinLabel)
         
-        hourlyForecastView.addSubviews(clockImageView, hourLable, separatorLine, collectionView)
+        hourlyForecastView.addSubviews(clockImageView, hourLabel, separatorLine, collectionView)
         
-        weeklyForecastView.addSubviews(calendarImageView, weekLable, separatorLine2, tableView)
+        weeklyForecastView.addSubviews(calendarImageView, weekLabel, separatorLine2, tableView)
         
     }
     
@@ -321,7 +326,7 @@ class WeatherViewController: UIViewController {
             $0.width.height.equalTo(20)
         }
         
-        hourLable.snp.makeConstraints {
+        hourLabel.snp.makeConstraints {
             $0.centerY.equalTo(clockImageView)
             $0.leading.equalTo(clockImageView.snp.trailing).offset(4)
         }
@@ -344,7 +349,7 @@ class WeatherViewController: UIViewController {
             $0.width.height.equalTo(20)
         }
         
-        weekLable.snp.makeConstraints {
+        weekLabel.snp.makeConstraints {
             $0.centerY.equalTo(calendarImageView)
             $0.leading.equalTo(calendarImageView.snp.trailing).offset(4)
         }
@@ -375,9 +380,9 @@ class WeatherViewController: UIViewController {
         tempMinLabel.textColor = theme.fontColor
         hourlyForecastView.backgroundColor = theme.pointColor1
         clockImageView.tintColor = theme.fontColor
-        hourLable.textColor = theme.fontColor
+        hourLabel.textColor = theme.fontColor
         calendarImageView.tintColor = theme.fontColor
-        weekLable.textColor = theme.fontColor
+        weekLabel.textColor = theme.fontColor
         weeklyForecastView.backgroundColor = theme.pointColor2
         
         leftAnimationView.animation = LottieAnimation.named(theme.animationName)
@@ -386,13 +391,13 @@ class WeatherViewController: UIViewController {
 }
 extension WeatherViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return houlyData.count
+        return hourlyData.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HourlyForecastCell.identifier, for: indexPath) as? HourlyForecastCell else { return UICollectionViewCell() }
         
-        let weather = houlyData[indexPath.item]
+        let weather = hourlyData[indexPath.item]
         cell.configure(weather: weather)
         
         return cell
@@ -411,13 +416,13 @@ extension WeatherViewController: UITableViewDataSource {
     // indexPath: 테이블 뷰의 셀과 섹션을 의미
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: WeeklyForecastCell.identifier) as? WeeklyForecastCell else { return UITableViewCell() }
-        cell.configureCell()
+        cell.configureCell(weather: dailyData[indexPath.row])
         cell.backgroundColor = .clear
         return cell
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 7
+        return dailyData.count
     }
 }
 //#Preview{

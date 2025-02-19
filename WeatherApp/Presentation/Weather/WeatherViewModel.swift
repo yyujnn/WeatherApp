@@ -6,18 +6,24 @@
 //
 
 import Foundation
+import CoreLocation
 import Combine
 
 class WeatherViewModel {
 
     @Published var currentWeather: CurrentWeatherResult?
-    @Published var hourlyWeather: HourlyWeatherResult?
+    @Published var hourlyWeather: [ForecastWeather] = []
+    @Published var dailyWeather: [ForecastWeather] = [] // 가공된 데이터 저장
     @Published var errorMessage: String?
     
     private var cancellables = Set<AnyCancellable>()
     
-    // API 호출
-    func fetchWeatherData(lat: Double, lon: Double) {
+    // 위치 정보 받아서 날씨 데이터 요청
+    func fetchWeatherData(location: CLLocation) {
+        let lat = location.coordinate.latitude
+        let lon = location.coordinate.longitude
+        print("location: (\(lat), \(lon))")
+        
         // 현재 날씨 데이터 가져오기
         WeatherAPIManager.shared.fetchCurrentWeather(lat: lat, lon: lon)
             .receive(on: DispatchQueue.main) // UI 업데이트를 위해 메인 스레드로 전환
@@ -30,16 +36,35 @@ class WeatherViewModel {
             })
             .store(in: &cancellables)
         
-        // 시간별 날씨 데이터 가져오기
-        WeatherAPIManager.shared.fetchHourlyWeather(lat: lat, lon: lon)
+        // 5day 날씨 데이터 가져오기
+        WeatherAPIManager.shared.fetchForecastWeather(lat: lat, lon: lon)
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { [weak self] completion in
                 if case .failure(let error) = completion {
-                    self?.errorMessage = "시간별 날씨 불러오기 실패: \(error.localizedDescription)"
+                    self?.errorMessage = "day 날씨 불러오기 실패: \(error.localizedDescription)"
                 }
-            }, receiveValue: { [weak self] hourlyData in
-                self?.hourlyWeather = hourlyData
+            }, receiveValue: { [weak self] forecastData in
+                self?.updateHourlyWeather(forecastData)
+                self?.updateDailyWeather(forecastData)
             })
             .store(in: &cancellables)
+    }
+    
+    private func updateHourlyWeather(_ forecastData: ForecastWeatherResult) {
+        let currentDate = Date().toKST() // 현재 서울 시간
+        let calendar = Calendar.current
+        let futureDate = calendar.date(byAdding: .hour, value: 27, to: currentDate)!
+
+        // 데이터 가공
+        hourlyWeather = forecastData.list.filter { weather in
+            if let date = weather.date {
+                return date > currentDate && date <= futureDate
+            }
+            return false
+        }
+    }
+    
+    private func updateDailyWeather(_ forecastData: ForecastWeatherResult) {
+        dailyWeather = forecastData.list
     }
 }
