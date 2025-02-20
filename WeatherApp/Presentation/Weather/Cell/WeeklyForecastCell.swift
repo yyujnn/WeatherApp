@@ -121,7 +121,7 @@ final class WeeklyForecastCell: UITableViewCell {
     }
     
     public func configureCell(weather: ForecastWeather) {
-        dayLabel.text = weather.dtTxt
+        dayLabel.text = "today"
         tempMaxLabel.text = String(weather.main.tempMax)
         tempMinLabel.text = String(weather.main.tempMin)
     }
