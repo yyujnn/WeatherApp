@@ -62,8 +62,7 @@ class HourlyForecastCell: UICollectionViewCell {
     }
     
     func configure(weather: ForecastWeather) {
-        // "2024-02-07 15:00:00" -> "15:00"
-        let time = String(weather.dtTxt.split(separator: " ")[1].prefix(5))
+        let time = weather.kstTime ?? ""
         let temperature = "\(Int(weather.main.temp))°"
         let iconCode = weather.weather.first?.icon ?? ""
 

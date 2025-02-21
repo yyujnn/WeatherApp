@@ -44,10 +44,31 @@ class WeatherViewModel {
                     self?.errorMessage = "day 날씨 불러오기 실패: \(error.localizedDescription)"
                 }
             }, receiveValue: { [weak self] forecastData in
+                self?.updateToKstTest(forecastData)
                 self?.updateHourlyWeather(forecastData)
                 self?.updateDailyWeather(forecastData)
             })
             .store(in: &cancellables)
+    }
+    
+    private func updateToKstTest(_ forecastData: ForecastWeatherResult) {
+        // forecastData의 각 항목에 대해 KST 변환 전후 test
+        forecastData.list.forEach { weather in
+            print("변환 전 date: \(Date(timeIntervalSince1970: TimeInterval(weather.dt)))")
+            
+            // kst 변환 후
+            if let kstDate = weather.kstDate {
+                print("KST date: \(kstDate)")
+            }
+            
+            if let kstString = weather.kstString {
+                print("KST String: \(kstString)")
+            }
+            
+            if let kstTime = weather.kstTime {
+                print("⏰ KST time: \(kstTime)")
+            }
+        }
     }
     
     private func updateHourlyWeather(_ forecastData: ForecastWeatherResult) {
@@ -57,7 +78,7 @@ class WeatherViewModel {
 
         // 데이터 가공
         hourlyWeather = forecastData.list.filter { weather in
-            if let date = weather.date {
+            if let date = weather.kstDate {
                 return date > currentDate && date <= futureDate
             }
             return false

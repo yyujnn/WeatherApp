@@ -11,6 +11,7 @@ struct CurrentWeatherResult: Codable {
     let weather: [Weather]
     let main: WeatherMain
     let name: String // 도시 이름 추가
+    let dt: Int
 }
 
 struct Weather: Codable {

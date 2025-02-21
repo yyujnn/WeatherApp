@@ -13,18 +13,30 @@ struct ForecastWeatherResult: Codable {
 
 struct ForecastWeather: Codable {
     let dt: Int
-    let dtTxt: String
     let main: WeatherMain
     let weather: [Weather]
     
-    var date: Date? {
+    var dtDate: Date? {
         return Date(timeIntervalSince1970: TimeInterval(dt))
     }
     
-    enum CodingKeys: String, CodingKey {
-        case dt
-        case dtTxt = "dt_txt"
-        case main
-        case weather
+    var kstDate: Date? {
+        return Date(timeIntervalSince1970: TimeInterval(dt)).toKST()
+    }
+    
+    var kstString: String? {
+        return dtDate?.summary
+    }
+    
+    var kstTime: String? {
+        return dtDate?.shortTime
     }
 }
+
+struct DailyWeather {
+    let date: String   // "yyyy-MM-dd"
+    let minTemp: Double
+    let maxTemp: Double
+    let weatherIcon: String
+}
+
