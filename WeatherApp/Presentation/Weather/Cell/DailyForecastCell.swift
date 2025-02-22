@@ -8,9 +8,9 @@
 import UIKit
 import SnapKit
 
-final class WeeklyForecastCell: UITableViewCell {
+final class DailyForecastCell: UITableViewCell {
     
-    static let identifier = "WeeklyForecastCell"
+    static let identifier = "DailyForecastCell"
     
     private let dayLabel = UILabel().then {
         $0.font = Gabarito.regular.of(size: 16)

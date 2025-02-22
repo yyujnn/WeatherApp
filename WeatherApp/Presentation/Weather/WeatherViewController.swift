@@ -135,7 +135,7 @@ class WeatherViewController: UIViewController {
         $0.backgroundColor = .clear
         $0.delegate = self
         $0.dataSource = self
-        $0.register(WeeklyForecastCell.self, forCellReuseIdentifier: WeeklyForecastCell.identifier)
+        $0.register(DailyForecastCell.self, forCellReuseIdentifier: DailyForecastCell.identifier)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -415,7 +415,7 @@ extension WeatherViewController: UITableViewDataSource {
     // 테이블 뷰의 indexPath마다 테이블 뷰 셀을 지정.
     // indexPath: 테이블 뷰의 셀과 섹션을 의미
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: WeeklyForecastCell.identifier) as? WeeklyForecastCell else { return UITableViewCell() }
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: DailyForecastCell.identifier) as? DailyForecastCell else { return UITableViewCell() }
         cell.configureCell(weather: dailyData[indexPath.row])
         cell.backgroundColor = .clear
         return cell
