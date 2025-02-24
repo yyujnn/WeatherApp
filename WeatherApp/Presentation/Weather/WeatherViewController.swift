@@ -17,7 +17,7 @@ class WeatherViewController: UIViewController {
     private var locationManager = LocationManager()
     private var cancellables = Set<AnyCancellable>()
     private var hourlyData: [ForecastWeather] = []
-    private var dailyData: [ForecastWeather] = []
+    private var dailyData: [DailyWeather] = []
     
     private let scrollView = UIScrollView().then {
         $0.backgroundColor = .clear
@@ -95,7 +95,7 @@ class WeatherViewController: UIViewController {
         $0.backgroundColor = .white
     }
     
-    private let weeklyForecastView = UIView().then {
+    private let dailyForecastView = UIView().then {
         $0.backgroundColor = .sunnyPoint2
         $0.layer.cornerRadius = 16
         $0.clipsToBounds = true
@@ -249,14 +249,14 @@ class WeatherViewController: UIViewController {
                          leftAnimationView,
                          rightAnimationView,
                          hourlyForecastView,
-                         weeklyForecastView
+                         dailyForecastView
         )
 
         tempStackView.addArrangedSubviews(tempMaxLabel, tempMinLabel)
         
         hourlyForecastView.addSubviews(clockImageView, hourLabel, separatorLine, collectionView)
         
-        weeklyForecastView.addSubviews(calendarImageView, weekLabel, separatorLine2, tableView)
+        dailyForecastView.addSubviews(calendarImageView, weekLabel, separatorLine2, tableView)
         
     }
     
@@ -268,7 +268,7 @@ class WeatherViewController: UIViewController {
         contentView.snp.makeConstraints {
             $0.edges.equalTo(scrollView.contentLayoutGuide)
             $0.width.equalTo(scrollView.frameLayoutGuide)
-            $0.bottom.equalTo(weeklyForecastView.snp.bottom).offset(16)
+            $0.bottom.equalTo(dailyForecastView.snp.bottom).offset(16)
         }
         
         cityLabel.snp.makeConstraints {
@@ -337,10 +337,10 @@ class WeatherViewController: UIViewController {
             $0.height.equalTo(0.5)
         }
         
-        weeklyForecastView.snp.makeConstraints {
+        dailyForecastView.snp.makeConstraints {
             $0.top.equalTo(hourlyForecastView.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview().inset(16)
-            $0.height.equalTo(340)
+            $0.height.equalTo(300)
         }
         
         calendarImageView.snp.makeConstraints {
@@ -383,7 +383,7 @@ class WeatherViewController: UIViewController {
         hourLabel.textColor = theme.fontColor
         calendarImageView.tintColor = theme.fontColor
         weekLabel.textColor = theme.fontColor
-        weeklyForecastView.backgroundColor = theme.pointColor2
+        dailyForecastView.backgroundColor = theme.pointColor2
         
         leftAnimationView.animation = LottieAnimation.named(theme.animationName)
         rightAnimationView.animation = LottieAnimation.named(theme.animationName)

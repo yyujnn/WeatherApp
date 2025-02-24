@@ -124,6 +124,9 @@ final class DailyForecastCell: UITableViewCell {
         dayLabel.text = weather.day
         tempMaxLabel.text = String(weather.maxTemp)
         tempMinLabel.text = String(weather.minTemp)
+        // todo: n/d
+        let iconName = WeatherIconManager.getSystemIconName(weather.weatherIcon)
+        iconImageView.image = UIImage(systemName: iconName)
     }
     
     // 인터페이스 빌더를 통해 셀을 초기화 할 때 사용하는 코드

@@ -13,7 +13,7 @@ class WeatherViewModel {
 
     @Published var currentWeather: CurrentWeatherResult?
     @Published var hourlyWeather: [ForecastWeather] = []
-    @Published var dailyWeather: [ForecastWeather] = [] // 가공된 데이터 저장
+    @Published var dailyWeather: [DailyWeather] = [] // 가공된 데이터 저장
     @Published var errorMessage: String?
     
     private var cancellables = Set<AnyCancellable>()
@@ -68,6 +68,10 @@ class WeatherViewModel {
             if let kstTime = weather.kstTime {
                 print("⏰ KST time: \(kstTime)")
             }
+            
+            if let kstTime = weather.dtDate?.basic {
+                print("🗓️ daily: \(kstTime)")
+            }
         }
     }
     
@@ -86,6 +90,35 @@ class WeatherViewModel {
     }
     
     private func updateDailyWeather(_ forecastData: ForecastWeatherResult) {
-        dailyWeather = forecastData.list
+        
+        //날짜("yyyy-MM-dd") 기준으로 그룹화
+        let groupedByDay = Dictionary(grouping: forecastData.list) { weather -> String? in
+            return weather.dtDate?.basic
+        }
+        
+        // 요일별 데이터 가공
+        let dailyWeatherList = groupedByDay.compactMap { (date, weathers) -> DailyWeather? in
+            // 최저/최고 온도 계산
+            let minTemp = weathers.map { $0.main.tempMin }.min() ?? 0.0
+            let maxTemp = weathers.map { $0.main.tempMax }.max() ?? 0.0
+            
+            // 가장 자주 등장하는 날씨 아이콘 찾기
+            let icon = mostFrequentIcon(weathers)
+            
+            return DailyWeather(day: date ?? "today", minTemp: minTemp, maxTemp: maxTemp, weatherIcon: icon)
+        }
+        
+        self.dailyWeather = dailyWeatherList
+    }
+    
+    // 가장 자주 등장하는 아이콘 반환
+    private func mostFrequentIcon(_ weathers: [ForecastWeather]) -> String {
+        let iconFrequency = weathers.reduce(into: [String: Int]()) { counts, weather in
+            let icon = weather.weather.first?.icon ?? ""
+            counts[icon] = (counts[icon] ?? 0) + 1
+        }
+        return iconFrequency.max { $0.value < $1.value }?.key ?? "01d"
     }
 }
+
+// todo: Date -> 요일 변환 (오늘은 "Today"로 표시)
