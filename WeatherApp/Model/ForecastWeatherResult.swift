@@ -34,7 +34,7 @@ struct ForecastWeather: Codable {
 }
 
 struct DailyWeather {
-    let date: String   // "yyyy-MM-dd"
+    let day: String   // "yyyy-MM-dd"
     let minTemp: Double
     let maxTemp: Double
     let weatherIcon: String
