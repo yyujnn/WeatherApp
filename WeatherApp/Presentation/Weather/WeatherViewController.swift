@@ -85,7 +85,7 @@ class WeatherViewController: UIViewController {
         $0.tintColor = .sunnyFont
     }
     
-    private let hourLabel = UILabel().then {
+    private let hourlyLabel = UILabel().then {
         $0.text = "Hourly Forecast"
         $0.font = Gabarito.regular.of(size: 14)
         $0.textColor = .sunnyFont
@@ -107,8 +107,8 @@ class WeatherViewController: UIViewController {
         $0.tintColor = .sunnyFont
     }
     
-    private let weekLabel = UILabel().then {
-        $0.text = "Weekly Forecast"
+    private let dailyLabel = UILabel().then {
+        $0.text = "Daily Forecast"
         $0.font = Gabarito.regular.of(size: 14)
         $0.textColor = .sunnyFont
     }
@@ -135,6 +135,7 @@ class WeatherViewController: UIViewController {
         $0.backgroundColor = .clear
         $0.delegate = self
         $0.dataSource = self
+        $0.allowsSelection = false
         $0.register(DailyForecastCell.self, forCellReuseIdentifier: DailyForecastCell.identifier)
     }
     
@@ -208,12 +209,12 @@ class WeatherViewController: UIViewController {
     }
     
     private func updateCurrentWeatherUI(data: CurrentWeatherResult) {
-        tempLabel.text = "\(Int(data.main.temp))"
+        tempLabel.text = "\(Int(data.main.temp.rounded()))"
         cityLabel.text = data.name
-        tempLabel.text = "\(Int(data.main.temp))"
-        tempMinLabel.text = "L: \(Int(data.main.tempMin))°"
-        tempMaxLabel.text = "H: \(Int(data.main.tempMax))°"
+        tempMinLabel.text = "L: \(Int(data.main.tempMin.rounded()))°"
+        tempMaxLabel.text = "H: \(Int(data.main.tempMax.rounded()))°"
     }
+
     
     private func showErrorAlert(message: String) {
         let alert = UIAlertController(title: "오류", message: message, preferredStyle: .alert)
@@ -254,9 +255,9 @@ class WeatherViewController: UIViewController {
 
         tempStackView.addArrangedSubviews(tempMaxLabel, tempMinLabel)
         
-        hourlyForecastView.addSubviews(clockImageView, hourLabel, separatorLine, collectionView)
+        hourlyForecastView.addSubviews(clockImageView, hourlyLabel, separatorLine, collectionView)
         
-        dailyForecastView.addSubviews(calendarImageView, weekLabel, separatorLine2, tableView)
+        dailyForecastView.addSubviews(calendarImageView, dailyLabel, separatorLine2, tableView)
         
     }
     
@@ -326,7 +327,7 @@ class WeatherViewController: UIViewController {
             $0.width.height.equalTo(20)
         }
         
-        hourLabel.snp.makeConstraints {
+        hourlyLabel.snp.makeConstraints {
             $0.centerY.equalTo(clockImageView)
             $0.leading.equalTo(clockImageView.snp.trailing).offset(4)
         }
@@ -349,7 +350,7 @@ class WeatherViewController: UIViewController {
             $0.width.height.equalTo(20)
         }
         
-        weekLabel.snp.makeConstraints {
+        dailyLabel.snp.makeConstraints {
             $0.centerY.equalTo(calendarImageView)
             $0.leading.equalTo(calendarImageView.snp.trailing).offset(4)
         }
@@ -380,9 +381,9 @@ class WeatherViewController: UIViewController {
         tempMinLabel.textColor = theme.fontColor
         hourlyForecastView.backgroundColor = theme.pointColor1
         clockImageView.tintColor = theme.fontColor
-        hourLabel.textColor = theme.fontColor
+        hourlyLabel.textColor = theme.fontColor
         calendarImageView.tintColor = theme.fontColor
-        weekLabel.textColor = theme.fontColor
+        dailyLabel.textColor = theme.fontColor
         dailyForecastView.backgroundColor = theme.pointColor2
         
         leftAnimationView.animation = LottieAnimation.named(theme.animationName)
@@ -425,6 +426,3 @@ extension WeatherViewController: UITableViewDataSource {
         return dailyData.count
     }
 }
-//#Preview{
-//    WeatherViewController()
-//}
