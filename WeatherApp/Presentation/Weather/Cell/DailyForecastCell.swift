@@ -63,7 +63,6 @@ final class DailyForecastCell: UITableViewCell {
     }
     
     private func setupViews() {
-
         [
             dayLabel,
             iconImageView,
@@ -79,7 +78,6 @@ final class DailyForecastCell: UITableViewCell {
     }
     
     private func setupConstraints() {
-        
         dayLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
             $0.leading.equalToSuperview().inset(16)
@@ -87,18 +85,19 @@ final class DailyForecastCell: UITableViewCell {
         
         iconImageView.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.leading.equalTo(dayLabel.snp.trailing).offset(32)
+            $0.centerX.equalToSuperview().offset(-32)
             $0.width.height.equalTo(24)
         }
         
         minTempStack.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.trailing.equalTo(maxTempStack.snp.leading).inset(-24)
+            $0.width.equalTo(60)
+            $0.centerX.equalToSuperview().offset(60)
         }
         
         maxTempStack.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.trailing.equalToSuperview().inset(16)
+            $0.leading.equalTo(minTempStack.snp.trailing).offset(16)
         }
         
         minImageView.snp.makeConstraints {
@@ -122,8 +121,9 @@ final class DailyForecastCell: UITableViewCell {
     
     public func configureCell(weather: DailyWeather) {
         dayLabel.text = weather.day
-        tempMaxLabel.text = String(weather.maxTemp)
-        tempMinLabel.text = String(weather.minTemp)
+        tempMaxLabel.text = "\(String(weather.maxTemp))°"
+        tempMinLabel.text = "\(String(weather.minTemp))°"
+        
         // todo: n/d
         let iconName = WeatherIconManager.getSystemIconName(weather.weatherIcon)
         iconImageView.image = UIImage(systemName: iconName)
@@ -135,4 +135,3 @@ final class DailyForecastCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 }
-
