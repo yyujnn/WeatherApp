@@ -13,7 +13,7 @@ class WeatherViewModel {
 
     @Published var currentWeather: CurrentWeatherResult?
     @Published var hourlyWeather: [ForecastWeather] = []
-    @Published var dailyWeather: [ForecastWeather] = [] // 가공된 데이터 저장
+    @Published var dailyWeather: [DailyWeather] = [] // 가공된 데이터 저장
     @Published var errorMessage: String?
     
     private var cancellables = Set<AnyCancellable>()
@@ -44,31 +44,10 @@ class WeatherViewModel {
                     self?.errorMessage = "day 날씨 불러오기 실패: \(error.localizedDescription)"
                 }
             }, receiveValue: { [weak self] forecastData in
-                self?.updateToKstTest(forecastData)
                 self?.updateHourlyWeather(forecastData)
                 self?.updateDailyWeather(forecastData)
             })
             .store(in: &cancellables)
-    }
-    
-    private func updateToKstTest(_ forecastData: ForecastWeatherResult) {
-        // forecastData의 각 항목에 대해 KST 변환 전후 test
-        forecastData.list.forEach { weather in
-            print("변환 전 date: \(Date(timeIntervalSince1970: TimeInterval(weather.dt)))")
-            
-            // kst 변환 후
-            if let kstDate = weather.kstDate {
-                print("KST date: \(kstDate)")
-            }
-            
-            if let kstString = weather.kstString {
-                print("KST String: \(kstString)")
-            }
-            
-            if let kstTime = weather.kstTime {
-                print("⏰ KST time: \(kstTime)")
-            }
-        }
     }
     
     private func updateHourlyWeather(_ forecastData: ForecastWeatherResult) {
@@ -86,6 +65,42 @@ class WeatherViewModel {
     }
     
     private func updateDailyWeather(_ forecastData: ForecastWeatherResult) {
-        dailyWeather = forecastData.list
+        
+        // 1. 날짜 기준으로 그룹화: yyyy-MM-dd
+        let groupedByDay = Dictionary(grouping: forecastData.list) { weather -> String? in
+            return weather.dtDate?.basic
+        }
+
+        // 2. 날짜 순으로 정렬
+        let sortedByDate = groupedByDay.sorted { (lhs, rhs) in
+            guard let leftDate = lhs.key?.toDate(),
+                  let rightDate = rhs.key?.toDate() else { return false }
+            return leftDate < rightDate
+        }
+   
+        // 3. 정렬된 데이터를 DailyWeather로 변환
+        let dailyWeatherList = sortedByDate.compactMap { (date, weathers) -> DailyWeather? in
+            guard let date = date else { return nil }
+            
+            let minTemp = Int(weathers.map { $0.main.tempMin }.min()?.rounded() ?? 0.0)
+            let maxTemp = Int(weathers.map { $0.main.tempMax }.max()?.rounded() ?? 0.0)
+
+            
+            // 가장 자주 등장하는 날씨 아이콘
+            let icon = mostFrequentIcon(weathers)
+            
+            return DailyWeather(day: date.toDayString() ?? "오류", minTemp: minTemp, maxTemp: maxTemp, weatherIcon: icon)
+        }
+        
+        self.dailyWeather = dailyWeatherList
+    }
+    
+    // 가장 자주 등장하는 아이콘을 반환
+    private func mostFrequentIcon(_ weathers: [ForecastWeather]) -> String {
+        let iconFrequency = weathers.reduce(into: [String: Int]()) { counts, weather in
+            let icon = weather.weather.first?.icon ?? ""
+            counts[icon] = (counts[icon] ?? 0) + 1
+        }
+        return iconFrequency.max { $0.value < $1.value }?.key ?? "01d"
     }
 }

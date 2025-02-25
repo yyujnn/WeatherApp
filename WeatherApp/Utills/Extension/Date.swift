@@ -19,6 +19,10 @@ extension Date {
         return toString("yyyy-MM-dd HH:mm:ss")
       }
     
+    public var basic: String {
+        return toString("yyyy-MM-dd")
+    }
+    
     public var shortTime: String {
         return toString("HH:mm")
     }
