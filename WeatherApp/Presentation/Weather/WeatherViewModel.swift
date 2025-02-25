@@ -44,35 +44,10 @@ class WeatherViewModel {
                     self?.errorMessage = "day 날씨 불러오기 실패: \(error.localizedDescription)"
                 }
             }, receiveValue: { [weak self] forecastData in
-                self?.updateToKstTest(forecastData)
                 self?.updateHourlyWeather(forecastData)
                 self?.updateDailyWeather(forecastData)
             })
             .store(in: &cancellables)
-    }
-    
-    private func updateToKstTest(_ forecastData: ForecastWeatherResult) {
-        // forecastData의 각 항목에 대해 KST 변환 전후 test
-        forecastData.list.forEach { weather in
-            print("변환 전 date: \(Date(timeIntervalSince1970: TimeInterval(weather.dt)))")
-            
-            // kst 변환 후
-            if let kstDate = weather.kstDate {
-                print("KST date: \(kstDate)")
-            }
-            
-            if let kstString = weather.kstString {
-                print("KST String: \(kstString)")
-            }
-            
-            if let kstTime = weather.kstTime {
-                print("⏰ KST time: \(kstTime)")
-            }
-            
-            if let kstTime = weather.dtDate?.basic {
-                print("🗓️ daily: \(kstTime)")
-            }
-        }
     }
     
     private func updateHourlyWeather(_ forecastData: ForecastWeatherResult) {
@@ -107,11 +82,9 @@ class WeatherViewModel {
         let dailyWeatherList = sortedByDate.compactMap { (date, weathers) -> DailyWeather? in
             guard let date = date else { return nil }
             
-            print("date: \(date), day: \(String(describing: date.toDayString()))")
-            
-            // 최저/최고 온도 계산
-            let minTemp = weathers.map { $0.main.tempMin }.min() ?? 0.0
-            let maxTemp = weathers.map { $0.main.tempMax }.max() ?? 0.0
+            let minTemp = Int(weathers.map { $0.main.tempMin }.min()?.rounded() ?? 0.0)
+            let maxTemp = Int(weathers.map { $0.main.tempMax }.max()?.rounded() ?? 0.0)
+
             
             // 가장 자주 등장하는 날씨 아이콘
             let icon = mostFrequentIcon(weathers)
