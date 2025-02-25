@@ -91,27 +91,38 @@ class WeatherViewModel {
     
     private func updateDailyWeather(_ forecastData: ForecastWeatherResult) {
         
-        //날짜("yyyy-MM-dd") 기준으로 그룹화
+        // 1. 날짜 기준으로 그룹화: yyyy-MM-dd
         let groupedByDay = Dictionary(grouping: forecastData.list) { weather -> String? in
             return weather.dtDate?.basic
         }
-        
-        // 요일별 데이터 가공
-        let dailyWeatherList = groupedByDay.compactMap { (date, weathers) -> DailyWeather? in
+
+        // 2. 날짜 순으로 정렬
+        let sortedByDate = groupedByDay.sorted { (lhs, rhs) in
+            guard let leftDate = lhs.key?.toDate(),
+                  let rightDate = rhs.key?.toDate() else { return false }
+            return leftDate < rightDate
+        }
+   
+        // 3. 정렬된 데이터를 DailyWeather로 변환
+        let dailyWeatherList = sortedByDate.compactMap { (date, weathers) -> DailyWeather? in
+            guard let date = date else { return nil }
+            
+            print("date: \(date), day: \(String(describing: date.toDayString()))")
+            
             // 최저/최고 온도 계산
             let minTemp = weathers.map { $0.main.tempMin }.min() ?? 0.0
             let maxTemp = weathers.map { $0.main.tempMax }.max() ?? 0.0
             
-            // 가장 자주 등장하는 날씨 아이콘 찾기
+            // 가장 자주 등장하는 날씨 아이콘
             let icon = mostFrequentIcon(weathers)
             
-            return DailyWeather(day: date ?? "today", minTemp: minTemp, maxTemp: maxTemp, weatherIcon: icon)
+            return DailyWeather(day: date.toDayString() ?? "오류", minTemp: minTemp, maxTemp: maxTemp, weatherIcon: icon)
         }
         
         self.dailyWeather = dailyWeatherList
     }
     
-    // 가장 자주 등장하는 아이콘 반환
+    // 가장 자주 등장하는 아이콘을 반환
     private func mostFrequentIcon(_ weathers: [ForecastWeather]) -> String {
         let iconFrequency = weathers.reduce(into: [String: Int]()) { counts, weather in
             let icon = weather.weather.first?.icon ?? ""
@@ -121,4 +132,33 @@ class WeatherViewModel {
     }
 }
 
-// todo: Date -> 요일 변환 (오늘은 "Today"로 표시)
+extension String {
+    // "yyyy-MM-dd" 형태의 문자열을 요일로 변환
+    func toDayString() -> String? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.timeZone = TimeZone(abbreviation: "KST")
+        guard let date = formatter.date(from: self) else { return nil }
+        
+        // 오늘: "Today" 반환
+        if Calendar.current.isDateInToday(date) {
+            return "Today"
+        }
+        
+        // 요일 변환
+        formatter.dateFormat = "EEEE"
+        formatter.locale = Locale(identifier: "en_US") // 영어 요일로 표시
+        
+        return formatter.string(from: date)
+    }
+    
+    // "yyyy-MM-dd" 형태의 문자열을 Date로 변환
+    func toDate() -> Date? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.timeZone = TimeZone(abbreviation: "KST")
+        return formatter.date(from: self)
+    }
+}
