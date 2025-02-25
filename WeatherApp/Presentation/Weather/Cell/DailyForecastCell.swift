@@ -125,7 +125,7 @@ final class DailyForecastCell: UITableViewCell {
         tempMinLabel.text = "\(String(weather.minTemp))°"
         
         // todo: n/d
-        let iconName = WeatherIconManager.getSystemIconName(weather.weatherIcon)
+        let iconName = WeatherIconManager.getSystemIconName(weather.weatherIcon, type: .daily)
         iconImageView.image = UIImage(systemName: iconName)
     }
     
