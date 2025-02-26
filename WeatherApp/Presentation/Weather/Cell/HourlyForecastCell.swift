@@ -61,19 +61,11 @@ class HourlyForecastCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(weather: ForecastWeather) {
-        let time = weather.kstTime ?? ""
-        let temperature = "\(Int(weather.main.temp))°"
-        let iconCode = weather.weather.first?.icon ?? ""
-
-        configure(time: time, temperature: temperature, iconCode: iconCode)
-    }
-    
-    func configure(time: String, temperature: String, iconCode: String) {
-        timeLabel.text = time
-        temperatureLabel.text = temperature
+    func configureCell(weather: HourlyWeather) {
+        timeLabel.text = weather.time
+        temperatureLabel.text = "\(weather.temp)"
         
-        let iconName = WeatherIconManager.getSystemIconName(iconCode, type: .hourly)
+        let iconName = WeatherIconManager.getSystemIconName(weather.icon, type: .hourly)
         iconImageView.image = UIImage(systemName: iconName)
     }
 }
