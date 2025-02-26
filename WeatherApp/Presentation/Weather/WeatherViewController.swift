@@ -16,7 +16,7 @@ class WeatherViewController: UIViewController {
     private var viewModel = WeatherViewModel()
     private var locationManager = LocationManager()
     private var cancellables = Set<AnyCancellable>()
-    private var hourlyData: [ForecastWeather] = []
+    private var hourlyData: [HourlyWeather] = []
     private var dailyData: [DailyWeather] = []
     
     private let scrollView = UIScrollView().then {
@@ -399,7 +399,7 @@ extension WeatherViewController: UICollectionViewDataSource, UICollectionViewDel
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HourlyForecastCell.identifier, for: indexPath) as? HourlyForecastCell else { return UICollectionViewCell() }
         
         let weather = hourlyData[indexPath.item]
-        cell.configure(weather: weather)
+        cell.configureCell(weather: weather)
         
         return cell
     }

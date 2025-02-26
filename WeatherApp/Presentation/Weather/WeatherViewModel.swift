@@ -12,7 +12,7 @@ import Combine
 class WeatherViewModel {
 
     @Published var currentWeather: CurrentWeatherResult?
-    @Published var hourlyWeather: [ForecastWeather] = []
+    @Published var hourlyWeather: [HourlyWeather] = []
     @Published var dailyWeather: [DailyWeather] = [] // 가공된 데이터 저장
     @Published var errorMessage: String?
     
@@ -55,12 +55,27 @@ class WeatherViewModel {
         let calendar = Calendar.current
         let futureDate = calendar.date(byAdding: .hour, value: 27, to: currentDate)!
 
-        // 데이터 가공
-        hourlyWeather = forecastData.list.filter { weather in
+        // 현재 날씨 HourlyWeather로 변환
+        let nowWeather = HourlyWeather(
+            time: "Now",
+            temp: Int(currentWeather?.main.temp.rounded() ?? 0),
+            icon: currentWeather?.weather.first?.icon ?? "01d"
+        )
+        
+        // 27시간 이내 예보 필터링
+        let filterForecast = forecastData.list.filter { weather in
             if let date = weather.kstDate {
                 return date > currentDate && date <= futureDate
             }
             return false
+        }
+        
+        hourlyWeather = [nowWeather] + filterForecast.map { weather in
+            return HourlyWeather(
+                time: weather.kstTime ?? "",
+                temp: Int(weather.main.temp),
+                icon: weather.weather.first?.icon ?? ""
+            )
         }
     }
     

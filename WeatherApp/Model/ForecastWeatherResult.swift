@@ -33,6 +33,12 @@ struct ForecastWeather: Codable {
     }
 }
 
+struct HourlyWeather {
+    let time: String // "Now"
+    let temp: Int
+    let icon: String
+}
+
 struct DailyWeather {
     let day: String   // "yyyy-MM-dd"
     let minTemp: Int
