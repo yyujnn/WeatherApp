@@ -20,11 +20,12 @@ class WeatherViewModel {
     
     // 위치 정보 받아서 날씨 데이터 요청
     func fetchWeatherData(location: CLLocation) {
-        let lat = location.coordinate.latitude
-        let lon = location.coordinate.longitude
-        print("location: (\(lat), \(lon))")
-        
-        // 현재 날씨 데이터 가져오기
+        let (lat, lon) = (location.coordinate.latitude, location.coordinate.longitude)
+        fetchCurrentWeather(lat: lat, lon: lon)
+        fetchForecastWeather(lat: lat, lon: lon)
+    }
+    
+    private func fetchCurrentWeather(lat: Double, lon: Double) {
         WeatherAPIManager.shared.fetchCurrentWeather(lat: lat, lon: lon)
             .receive(on: DispatchQueue.main) // UI 업데이트를 위해 메인 스레드로 전환
             .sink(receiveCompletion: { [weak self] completion in
@@ -35,8 +36,9 @@ class WeatherViewModel {
                 self?.currentWeather = weatherData
             })
             .store(in: &cancellables)
-        
-        // 5day 날씨 데이터 가져오기
+    }
+    
+    private func fetchForecastWeather(lat: Double, lon: Double) {
         WeatherAPIManager.shared.fetchForecastWeather(lat: lat, lon: lon)
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { [weak self] completion in
@@ -51,30 +53,28 @@ class WeatherViewModel {
     }
     
     private func updateHourlyWeather(_ forecastData: ForecastWeatherResult) {
-        let currentDate = Date().toKST() // 현재 서울 시간
-        let calendar = Calendar.current
-        let futureDate = calendar.date(byAdding: .hour, value: 27, to: currentDate)!
-
-        // 현재 날씨 HourlyWeather로 변환
+        guard let currentWeather = currentWeather else { return }
+        
         let nowWeather = HourlyWeather(
             time: "Now",
-            temp: Int(currentWeather?.main.temp.rounded() ?? 0),
-            icon: currentWeather?.weather.first?.icon ?? "01d"
+            temp: Int(currentWeather.main.temp.rounded()),
+            icon: currentWeather.weather.first?.icon ?? "01n"
         )
         
+        let currentDate = Date().toKST()
+        let futureDate = Calendar.current.date(byAdding: .hour, value: 27, to: currentDate)!
+        
         // 27시간 이내 예보 필터링
-        let filterForecast = forecastData.list.filter { weather in
-            if let date = weather.kstDate {
-                return date > currentDate && date <= futureDate
-            }
-            return false
+        let filterForecast = forecastData.list.filter {
+            guard let date = $0.kstDate else { return false }
+            return date > currentDate && date <= futureDate
         }
         
         hourlyWeather = [nowWeather] + filterForecast.map { weather in
             return HourlyWeather(
-                time: weather.kstTime ?? "",
+                time: weather.kstTime ??  "--:--",
                 temp: Int(weather.main.temp),
-                icon: weather.weather.first?.icon ?? ""
+                icon: weather.weather.first?.icon ?? "01n"
             )
         }
     }

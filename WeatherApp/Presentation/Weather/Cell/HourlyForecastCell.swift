@@ -63,7 +63,7 @@ class HourlyForecastCell: UICollectionViewCell {
     
     func configureCell(weather: HourlyWeather) {
         timeLabel.text = weather.time
-        temperatureLabel.text = "\(weather.temp)"
+        temperatureLabel.text = "\(weather.temp)°"
         
         let iconName = WeatherIconManager.getSystemIconName(weather.icon, type: .hourly)
         iconImageView.image = UIImage(systemName: iconName)
