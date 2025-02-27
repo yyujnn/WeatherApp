@@ -30,7 +30,7 @@ class WeatherViewModel {
             .receive(on: DispatchQueue.main) // UI 업데이트를 위해 메인 스레드로 전환
             .sink(receiveCompletion: { [weak self] completion in
                 if case .failure(let error) = completion {
-                    self?.errorMessage = "현재 날씨 불러오기 실패: \(error.localizedDescription)"
+                    self?.handleError(error, message: "현재 날씨 불러오기 실패")
                 }
             }, receiveValue: { [weak self] weatherData in
                 self?.currentWeather = weatherData
@@ -43,13 +43,17 @@ class WeatherViewModel {
             .receive(on: DispatchQueue.main)
             .sink(receiveCompletion: { [weak self] completion in
                 if case .failure(let error) = completion {
-                    self?.errorMessage = "day 날씨 불러오기 실패: \(error.localizedDescription)"
+                    self?.handleError(error, message: "day 날씨 불러오기 실패")
                 }
             }, receiveValue: { [weak self] forecastData in
                 self?.updateHourlyWeather(forecastData)
                 self?.updateDailyWeather(forecastData)
             })
             .store(in: &cancellables)
+    }
+    
+    private func handleError(_ error: Error, message: String) {
+        self.errorMessage = "\(message): \(error.localizedDescription)"
     }
     
     private func updateHourlyWeather(_ forecastData: ForecastWeatherResult) {
@@ -81,19 +85,19 @@ class WeatherViewModel {
     
     private func updateDailyWeather(_ forecastData: ForecastWeatherResult) {
         
-        // 1. 날짜 기준으로 그룹화: yyyy-MM-dd
+        // 날짜 기준 그룹화
         let groupedByDay = Dictionary(grouping: forecastData.list) { weather -> String? in
             return weather.dtDate?.basic
         }
 
-        // 2. 날짜 순으로 정렬
+        // 날짜 순 정렬
         let sortedByDate = groupedByDay.sorted { (lhs, rhs) in
             guard let leftDate = lhs.key?.toDate(),
                   let rightDate = rhs.key?.toDate() else { return false }
             return leftDate < rightDate
         }
    
-        // 3. 정렬된 데이터를 DailyWeather로 변환
+        // DailyWeather로 변환
         let dailyWeatherList = sortedByDate.compactMap { (date, weathers) -> DailyWeather? in
             guard let date = date else { return nil }
             
@@ -101,10 +105,12 @@ class WeatherViewModel {
             let maxTemp = Int(weathers.map { $0.main.tempMax }.max()?.rounded() ?? 0.0)
 
             
-            // 가장 자주 등장하는 날씨 아이콘
             let icon = mostFrequentIcon(weathers)
             
-            return DailyWeather(day: date.toDayString() ?? "오류", minTemp: minTemp, maxTemp: maxTemp, weatherIcon: icon)
+            return DailyWeather(day: date.toDayString() ?? "오류",
+                                minTemp: minTemp,
+                                maxTemp: maxTemp,
+                                weatherIcon: icon)
         }
         
         self.dailyWeather = dailyWeatherList
