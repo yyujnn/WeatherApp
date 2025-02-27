@@ -12,6 +12,7 @@ import Combine
 class WeatherViewModel {
 
     @Published var currentWeather: CurrentWeatherResult?
+    @Published var weatherCondition: WeatherCondition?
     @Published var hourlyWeather: [HourlyWeather] = []
     @Published var dailyWeather: [DailyWeather] = [] // 가공된 데이터 저장
     @Published var errorMessage: String?
@@ -33,9 +34,27 @@ class WeatherViewModel {
                     self?.handleError(error, message: "현재 날씨 불러오기 실패")
                 }
             }, receiveValue: { [weak self] weatherData in
-                self?.currentWeather = weatherData
+                guard let self = self else { return }
+                self.currentWeather = weatherData
+                print("현재 날씨: \(weatherData)")
+                
+                if let icon = weatherData.weather.first?.icon {
+                    self.weatherCondition = self.mapWeatherCodeToCondition(icon)
+                }
             })
             .store(in: &cancellables)
+    }
+    
+    private func mapWeatherCodeToCondition(_ icon: String) -> WeatherCondition {
+        switch icon {
+        case "01d", "01n": return .sunny
+        case "02d", "02n": return .cloudy
+        case "09d", "09n", "10d", "10n": return .rainy
+        case "13d", "13n": return .snowy
+        case "50d", "50n": return .foggy
+        case "11d", "11n": return .stormy
+        default: return .sunny
+        }
     }
     
     private func fetchForecastWeather(lat: Double, lon: Double) {
@@ -51,11 +70,7 @@ class WeatherViewModel {
             })
             .store(in: &cancellables)
     }
-    
-    private func handleError(_ error: Error, message: String) {
-        self.errorMessage = "\(message): \(error.localizedDescription)"
-    }
-    
+   
     private func updateHourlyWeather(_ forecastData: ForecastWeatherResult) {
         guard let currentWeather = currentWeather else { return }
         
@@ -123,5 +138,9 @@ class WeatherViewModel {
             counts[icon] = (counts[icon] ?? 0) + 1
         }
         return iconFrequency.max { $0.value < $1.value }?.key ?? "01d"
+    }
+    
+    private func handleError(_ error: Error, message: String) {
+        self.errorMessage = "\(message): \(error.localizedDescription)"
     }
 }
