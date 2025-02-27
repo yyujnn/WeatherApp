@@ -12,9 +12,9 @@ final class WeatherThemeManager {
     
     private init() {}
     
-    func updateTheme(for weather: String) -> WeatherTheme {
-        switch weather {
-        case "sunny":
+    func applyTheme(_ condition: WeatherCondition) -> WeatherTheme {
+        switch condition {
+        case .sunny:
             return WeatherTheme(
                 backgroundColor: .sunnyBackground,
                 fontColor: .sunnyFont,
@@ -23,7 +23,7 @@ final class WeatherThemeManager {
                 animationName: "sunnyAnimation"
             )
             
-        case "cloudy":
+        case .cloudy:
             return WeatherTheme(
                 backgroundColor: .cloudyBackground,
                 fontColor: .appDarkGray,
@@ -32,7 +32,7 @@ final class WeatherThemeManager {
                 animationName: "cloudyAnimation"
             )
             
-        case "rainy":
+        case .rainy:
             return WeatherTheme(
                 backgroundColor: .rainyBackground,
                 fontColor: .appDarkGray,
@@ -41,7 +41,7 @@ final class WeatherThemeManager {
                 animationName: "rainyAnimation"
             )
             
-        case "snowy":
+        case .snowy:
             return WeatherTheme(
                 backgroundColor: .snowyBackground,
                 fontColor: .snowyFont,
@@ -50,7 +50,7 @@ final class WeatherThemeManager {
                 animationName: "snowyAnimation"
             )
             
-        case "foggy":
+        case .foggy:
             return WeatherTheme(
                 backgroundColor: .foggyBackground,
                 fontColor: .appDarkGray,
@@ -59,7 +59,7 @@ final class WeatherThemeManager {
                 animationName: "foggyAnimation"
             )
             
-        case "stormy":
+        case .stormy:
             return WeatherTheme(
                 backgroundColor: .stormyBackground,
                 fontColor: .white,
@@ -67,17 +67,12 @@ final class WeatherThemeManager {
                 pointColor2: .stormyPoint2,
                 animationName: "stormyAnimation"
             )
-            
-        default:
-            return WeatherTheme(
-                backgroundColor: .sunnyBackground,
-                fontColor: .sunnyFont,
-                pointColor1: .sunnyPoint1,
-                pointColor2: .sunnyPoint2,
-                animationName: "sunnyAnimation"
-            )
         }
     }
+}
+
+enum WeatherCondition {
+    case sunny, cloudy, rainy, snowy, foggy, stormy
 }
 
 struct WeatherIconManager {
