@@ -148,7 +148,6 @@ class WeatherViewController: UIViewController {
         super.viewDidLoad()
         setupViews()
         setupConstraints()
-        setupLottieAnimations()
         bindLocationUpdates()
         bindViewModel()
     }
@@ -183,7 +182,8 @@ class WeatherViewController: UIViewController {
         viewModel.$weatherCondition
             .compactMap { $0 } // nil 제거
             .sink { [weak self] condition in
-                self?.applyTheme(for: .cloudy)
+                self?.applyTheme(for: condition)
+                self?.setupLottieAnimations()
             }
             .store(in: &cancellables)
         
@@ -258,7 +258,7 @@ class WeatherViewController: UIViewController {
     private func configureLottieView(_ animationView: LottieAnimationView) {
         animationView.contentMode = .scaleAspectFit
         animationView.loopMode = .loop
-        animationView.animationSpeed = 1.0
+        animationView.animationSpeed = 1.5
         animationView.play()
     }
     
