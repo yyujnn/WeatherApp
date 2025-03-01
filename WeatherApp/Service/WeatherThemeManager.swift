@@ -12,9 +12,9 @@ final class WeatherThemeManager {
     
     private init() {}
     
-    func updateTheme(for weather: String) -> WeatherTheme {
-        switch weather {
-        case "sunny":
+    func applyTheme(_ condition: WeatherCondition) -> WeatherTheme {
+        switch condition {
+        case .sunny:
             return WeatherTheme(
                 backgroundColor: .sunnyBackground,
                 fontColor: .sunnyFont,
@@ -23,7 +23,7 @@ final class WeatherThemeManager {
                 animationName: "sunnyAnimation"
             )
             
-        case "cloudy":
+        case .cloudy:
             return WeatherTheme(
                 backgroundColor: .cloudyBackground,
                 fontColor: .appDarkGray,
@@ -32,7 +32,7 @@ final class WeatherThemeManager {
                 animationName: "cloudyAnimation"
             )
             
-        case "rainy":
+        case .rainy:
             return WeatherTheme(
                 backgroundColor: .rainyBackground,
                 fontColor: .appDarkGray,
@@ -41,7 +41,7 @@ final class WeatherThemeManager {
                 animationName: "rainyAnimation"
             )
             
-        case "snowy":
+        case .snowy:
             return WeatherTheme(
                 backgroundColor: .snowyBackground,
                 fontColor: .snowyFont,
@@ -50,7 +50,7 @@ final class WeatherThemeManager {
                 animationName: "snowyAnimation"
             )
             
-        case "foggy":
+        case .foggy:
             return WeatherTheme(
                 backgroundColor: .foggyBackground,
                 fontColor: .appDarkGray,
@@ -59,7 +59,7 @@ final class WeatherThemeManager {
                 animationName: "foggyAnimation"
             )
             
-        case "stormy":
+        case .stormy:
             return WeatherTheme(
                 backgroundColor: .stormyBackground,
                 fontColor: .white,
@@ -67,34 +67,48 @@ final class WeatherThemeManager {
                 pointColor2: .stormyPoint2,
                 animationName: "stormyAnimation"
             )
-            
-        default:
-            return WeatherTheme(
-                backgroundColor: .sunnyBackground,
-                fontColor: .sunnyFont,
-                pointColor1: .sunnyPoint1,
-                pointColor2: .sunnyPoint2,
-                animationName: "sunnyAnimation"
-            )
         }
     }
-    
+}
+
+enum WeatherCondition {
+    case sunny, cloudy, rainy, snowy, foggy, stormy
 }
 
 struct WeatherIconManager {
     
-    static func getSystemIconName(_ iconCode: String) -> String {
-        switch iconCode {
-        case "01d": return "sun.max.fill"     // 맑은 낮
-        case "01n": return "moon.stars.fill"  // 맑은 밤
-        case "02d", "02n": return "cloud.sun.fill" // 약간 흐림
-        case "03d", "03n": return "cloud.fill" // 흐림
-        case "09d", "09n": return "cloud.drizzle.fill" // 이슬비
-        case "10d", "10n": return "cloud.rain.fill"  // 비
-        case "11d", "11n": return "cloud.bolt.fill"  // 천둥번개
-        case "13d", "13n": return "snow"      // 눈
-        case "50d", "50n": return "cloud.fog.fill"  // 안개
-        default: return "cloud"              // 기본값
+    enum IconType {
+        case hourly  // 시간별 (d/n 구분 유지)
+        case daily   // 하루 (대표 아이콘만 표시)
+    }
+    
+    static func getSystemIconName(_ iconCode: String, type: IconType) -> String {
+        
+        // iconCode에 따른 낮/밤 아이콘 매칭
+        let iconMap: [String: (day: String, night: String)] = [
+            "01": ("sun.max.fill", "moon.stars.fill"), // 맑음 (clear sky)
+            "02": ("cloud.sun.fill", "cloud.moon.fill"), // 약간 흐림 (few clouds)
+            "03": ("cloud.fill", "cloud.fill"), // 흐림 (scattered clouds)
+            "04": ("smoke.fill", "smoke.fill"), // 구름 많음 (broken clouds)
+            "09": ("cloud.drizzle.fill", "cloud.drizzle.fill"), // 소나기 (shower rain)
+            "10": ("cloud.rain.fill", "cloud.rain.fill"), // 비 (rain)
+            "11": ("cloud.bolt.fill", "cloud.bolt.fill"), // 천둥번개 (thunderstorm)
+            "13": ("snow", "snow"), // 눈 (snow)
+            "50": ("cloud.fog.fill", "cloud.fog.fill") // 안개 (mist)
+        ]
+        
+        let codePrefix = String(iconCode.prefix(2)) // "01d" -> "01"
+        let isNight = iconCode.hasSuffix("n")
+        
+        guard let icons = iconMap[codePrefix] else {
+            return "cloud" // 기본 아이콘
+        }
+        
+        switch type {
+        case .hourly:
+            return isNight ? icons.night : icons.day
+        case .daily:
+            return icons.day // 항상 낮 아이콘 사용
         }
     }
 }

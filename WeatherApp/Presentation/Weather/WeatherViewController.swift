@@ -16,7 +16,7 @@ class WeatherViewController: UIViewController {
     private var viewModel = WeatherViewModel()
     private var locationManager = LocationManager()
     private var cancellables = Set<AnyCancellable>()
-    private var hourlyData: [ForecastWeather] = []
+    private var hourlyData: [HourlyWeather] = []
     private var dailyData: [DailyWeather] = []
     
     private let scrollView = UIScrollView().then {
@@ -49,7 +49,7 @@ class WeatherViewController: UIViewController {
         $0.font = Gabarito.medium.of(size: 100)
     }
     
-    private let stateLabel = UILabel().then {
+    private let conditionLabel = UILabel().then {
         $0.textColor = .sunnyFont
         $0.text = "--"
         $0.font = Gabarito.regular.of(size: 26)
@@ -148,10 +148,8 @@ class WeatherViewController: UIViewController {
         super.viewDidLoad()
         setupViews()
         setupConstraints()
-        setupLottieAnimations()
-        updateThme(for: "sunny")
         bindLocationUpdates()
-        bindWeatherUpdates()
+        bindViewModel()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -172,12 +170,20 @@ class WeatherViewController: UIViewController {
             .store(in: &cancellables)
     }
     
-    private func bindWeatherUpdates() {
+    private func bindViewModel() {
         // 현재 날씨 데이터 바인딩
         viewModel.$currentWeather
             .compactMap { $0 } // nil 값 필터링
             .sink { [weak self] currentData in
                 self?.updateCurrentWeatherUI(data: currentData)
+            }
+            .store(in: &cancellables)
+        
+        viewModel.$weatherCondition
+            .compactMap { $0 } // nil 제거
+            .sink { [weak self] condition in
+                self?.applyTheme(for: condition)
+                self?.setupLottieAnimations()
             }
             .store(in: &cancellables)
         
@@ -208,6 +214,27 @@ class WeatherViewController: UIViewController {
             .store(in: &cancellables)
     }
     
+    private func applyTheme(for condition: WeatherCondition) {
+        let theme = WeatherThemeManager.shared.applyTheme( condition)
+        conditionLabel.text = "\(condition)"
+        view.backgroundColor = theme.backgroundColor
+        cityLabel.textColor = theme.fontColor
+        tempLabel.textColor = theme.fontColor
+        degreeLabel.textColor = theme.fontColor
+        conditionLabel.textColor = theme.fontColor
+        tempMaxLabel.textColor = theme.fontColor
+        tempMinLabel.textColor = theme.fontColor
+        hourlyForecastView.backgroundColor = theme.pointColor1
+        clockImageView.tintColor = theme.fontColor
+        hourlyLabel.textColor = theme.fontColor
+        calendarImageView.tintColor = theme.fontColor
+        dailyLabel.textColor = theme.fontColor
+        dailyForecastView.backgroundColor = theme.pointColor2
+        
+        leftAnimationView.animation = LottieAnimation.named(theme.animationName)
+        rightAnimationView.animation = LottieAnimation.named(theme.animationName)
+    }
+    
     private func updateCurrentWeatherUI(data: CurrentWeatherResult) {
         tempLabel.text = "\(Int(data.main.temp.rounded()))"
         cityLabel.text = data.name
@@ -231,7 +258,7 @@ class WeatherViewController: UIViewController {
     private func configureLottieView(_ animationView: LottieAnimationView) {
         animationView.contentMode = .scaleAspectFit
         animationView.loopMode = .loop
-        animationView.animationSpeed = 1.0
+        animationView.animationSpeed = 1.5
         animationView.play()
     }
     
@@ -245,7 +272,7 @@ class WeatherViewController: UIViewController {
         contentView.addSubviews(cityLabel,
                          tempLabel,
                          degreeLabel,
-                         stateLabel,
+                         conditionLabel,
                          tempStackView,
                          leftAnimationView,
                          rightAnimationView,
@@ -287,14 +314,14 @@ class WeatherViewController: UIViewController {
             $0.left.equalTo(tempLabel.snp.right).offset(4)
         }
         
-        stateLabel.snp.makeConstraints {
+        conditionLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
             $0.top.equalTo(tempLabel.snp.bottom).offset(10)
         }
         
         tempStackView.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalTo(stateLabel.snp.bottom).offset(12)
+            $0.top.equalTo(conditionLabel.snp.bottom).offset(12)
         }
         
         leftAnimationView.snp.makeConstraints {
@@ -304,7 +331,7 @@ class WeatherViewController: UIViewController {
         }
         
         rightAnimationView.snp.makeConstraints {
-            $0.top.equalTo(stateLabel)
+            $0.top.equalTo(conditionLabel)
             $0.trailing.equalToSuperview().offset(20)
             $0.width.height.equalTo(120)
         }
@@ -367,28 +394,6 @@ class WeatherViewController: UIViewController {
             $0.bottom.equalToSuperview().inset(8)
         }
     }
-    
-    // 테마 업데이트 메서드
-    private func updateThme(for weather: String) {
-        let theme = WeatherThemeManager.shared.updateTheme(for: weather)
-        
-        view.backgroundColor = theme.backgroundColor
-        cityLabel.textColor = theme.fontColor
-        tempLabel.textColor = theme.fontColor
-        degreeLabel.textColor = theme.fontColor
-        stateLabel.textColor = theme.fontColor
-        tempMaxLabel.textColor = theme.fontColor
-        tempMinLabel.textColor = theme.fontColor
-        hourlyForecastView.backgroundColor = theme.pointColor1
-        clockImageView.tintColor = theme.fontColor
-        hourlyLabel.textColor = theme.fontColor
-        calendarImageView.tintColor = theme.fontColor
-        dailyLabel.textColor = theme.fontColor
-        dailyForecastView.backgroundColor = theme.pointColor2
-        
-        leftAnimationView.animation = LottieAnimation.named(theme.animationName)
-        rightAnimationView.animation = LottieAnimation.named(theme.animationName)
-    }
 }
 extension WeatherViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -399,7 +404,7 @@ extension WeatherViewController: UICollectionViewDataSource, UICollectionViewDel
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HourlyForecastCell.identifier, for: indexPath) as? HourlyForecastCell else { return UICollectionViewCell() }
         
         let weather = hourlyData[indexPath.item]
-        cell.configure(weather: weather)
+        cell.configureCell(weather: weather)
         
         return cell
     }
