@@ -34,7 +34,7 @@ class WeatherViewController: UIViewController {
     private let cityLabel = UILabel().then {
         $0.text = "Loading..."
         $0.textColor = .sunnyFont
-        $0.font = Gabarito.regular.of(size: 30)
+        $0.font = Gabarito.regular.of(size: 32)
     }
     
     private let tempLabel = UILabel().then {
@@ -150,14 +150,6 @@ class WeatherViewController: UIViewController {
         setupConstraints()
         bindLocationUpdates()
         bindViewModel()
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        leftAnimationView.stop()
-        rightAnimationView.stop()
-        leftAnimationView.removeFromSuperview()
-        rightAnimationView.removeFromSuperview()
     }
     
     // 위치 업데이트 바인딩
@@ -301,7 +293,7 @@ class WeatherViewController: UIViewController {
         
         cityLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview()
+            $0.top.equalToSuperview().offset(24)
         }
         
         tempLabel.snp.makeConstraints {
