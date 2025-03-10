@@ -6,62 +6,76 @@
 //
 
 import UIKit
+import SnapKit
 import Then
 
 class SearchViewController: UIViewController {
     
-    private var data = ["seoul", "incheon", "busan", "서울", "인천", "부신", "대구", "대전", "광주", "제주"]
+    private var data = ["seoul", "incheon"]
     private var filteredData: [String] = []
     
-    private let tableView = UITableView()
     private let searchController = UISearchController(searchResultsController: nil)
+    private var collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         setupSearchController()
+        setupCollectionView()
     }
     
     private func setupUI() {
-        view.backgroundColor = .white
+        view.backgroundColor = .sunnyBackground
+    }
+    
+    private func setupCollectionView() {
+        let layout = UICollectionViewFlowLayout()
+        layout.itemSize = CGSize(width: view.frame.width - 32, height: 130)
+        layout.scrollDirection = .vertical
+        layout.minimumLineSpacing = 15
         
-        tableView.frame  = view.bounds
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.register(SearchCell.self,
-                           forCellReuseIdentifier: SearchCell.identifier)
-        view.addSubview(tableView)
+        collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = .sunnyBackground
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.register(SavedLocationCell.self, forCellWithReuseIdentifier: SavedLocationCell.identifier)
+        
+        view.addSubview(collectionView)
+        collectionView.snp.makeConstraints {             
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(8)
+            $0.leading.equalTo(view.snp.leading)
+            $0.trailing.equalTo(view.snp.trailing)
+            $0.bottom.equalTo(view.snp.bottom)
+        }
     }
     
     private func setupSearchController() {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Search for a city"
+        searchController.searchBar.tintColor = .sunnyFont
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
     }
 }
 
-extension SearchViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return isFiltering ? filteredData.count : data.count
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: SearchCell.identifier, for: indexPath) as? SearchCell else { return UITableViewCell() }
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SavedLocationCell.identifier, for: indexPath) as? SavedLocationCell else { return UICollectionViewCell() }
+        
         let text = isFiltering ? filteredData[indexPath.row] : data[indexPath.row]
-        cell.configure(with: text)
+        cell.configure(location: text)
         return cell
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let selectedItem = isFiltering ? filteredData[indexPath.row] : data[indexPath.row]
         print("선택한 항목: \(selectedItem)")
-    }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 80
     }
 }
 
@@ -70,12 +84,12 @@ extension SearchViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         guard let searchText = searchController.searchBar.text, !searchText.isEmpty else {
             filteredData = []
-            tableView.reloadData()
+            collectionView.reloadData()
             return
         }
         
         filteredData = data.filter { $0.lowercased().contains(searchText.lowercased()) }
-        tableView.reloadData()
+        collectionView.reloadData()
     }
 }
 
