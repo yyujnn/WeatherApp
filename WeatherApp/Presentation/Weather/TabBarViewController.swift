@@ -22,11 +22,9 @@ class TabBarViewController: UITabBarController {
         let searchVC = SearchViewController()
         searchVC.tabBarItem.image = UIImage.searchIcon
         searchVC.tabBarItem.title = "검색"
-        
-        let mainNav = UINavigationController(rootViewController: mainVC)
+
         let searchNav = UINavigationController(rootViewController: searchVC)
-        
-        self.viewControllers = [mainNav, searchNav]
+        self.viewControllers = [searchNav, mainVC]
         tabBar.tintColor = UIColor.appBlack
         
         addBorderToTabBar()

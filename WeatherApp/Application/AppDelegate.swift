@@ -16,7 +16,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // 스토리보드 삭제 후 앱 시작점 설정
         let window = UIWindow(frame: UIScreen.main.bounds)
-        window.rootViewController = UINavigationController(rootViewController: TabBarViewController())
+        window.rootViewController = TabBarViewController()
         window.makeKeyAndVisible()
         self.window = window
         
