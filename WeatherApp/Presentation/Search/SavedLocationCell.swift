@@ -13,10 +13,31 @@ class SavedLocationCell: UICollectionViewCell {
     
     static let identifier = "SavedLocationCell"
     
+    private let customView = CustomShapeView()
+    
     private let temperatureLabel = UILabel().then {
         $0.font = Gabarito.semibold.of(size: 48)
         $0.textColor = .white
+        $0.text = "°"
         $0.textAlignment = .left
+    }
+    
+    private let tempMinLabel = UILabel().then {
+        $0.textColor = .white
+        $0.text = "L: --°"
+        $0.font = Gabarito.regular.of(size: 14)
+    }
+    
+    private let tempMaxLabel = UILabel().then {
+        $0.textColor = .white
+        $0.text = "H: --°"
+        $0.font = Gabarito.regular.of(size: 14)
+    }
+    
+    private let tempStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 8
+        $0.distribution = .fillEqually
     }
     
     private let locationLabel = UILabel().then {
@@ -34,84 +55,47 @@ class SavedLocationCell: UICollectionViewCell {
     private let weatherIcon = UIImageView().then {
         $0.contentMode = .scaleAspectFit
         $0.tintColor = .white
+        $0.clipsToBounds = false
     }
     
-    private let conditionLabel = UILabel()
-    private let tempStackView = UIStackView()
-    private let gradientLayer = CAGradientLayer()
+    private let conditionLabel = UILabel().then {
+        $0.font = Gabarito.regular.of(size: 14)
+        $0.text = "--"
+        $0.textColor = .white
+        $0.textAlignment = .center
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
-        setupGradient()
         setupConstraints()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    // MARK: - 배경 그라데이션
-    private func setupGradient() {
-        gradientLayer.colors = [
-            UIColor.sunnyFont.withAlphaComponent(0.2).cgColor,
-            UIColor.sunnyPoint2.withAlphaComponent(0.8).cgColor
-        ]
-        gradientLayer.locations = [0, 1]
-        gradientLayer.startPoint = CGPoint(x: 0, y: 0.5)
-        gradientLayer.endPoint = CGPoint(x: 1, y: 0.5)
-        layer.insertSublayer(gradientLayer, at: 0)
-    }
-    
-    
-    // MARK: - 비대칭 카드 레이아웃
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        
-        // 그라디언트 크기 조정
-        gradientLayer.frame = bounds
-        
-        let width = bounds.width
-        let height = bounds.height
-        
-        // 커스텀 모양 적용
-        let path = UIBezierPath()
-        let cornerRadius: CGFloat = 22
-        let slantHeight: CGFloat = 30
-
-        let slantStopY: CGFloat = height * 0.4  // 우측 기울기 조정
-        
-        // 왼쪽 상단 둥근 모서리
-        path.move(to: CGPoint(x: 0, y: cornerRadius))
-        path.addQuadCurve(to: CGPoint(x: slantHeight, y: 0), controlPoint: CGPoint.zero)
-        
-        // 기울어진 우측 상단
-        path.addLine(to: CGPoint(x: width - cornerRadius, y: slantStopY))
-        path.addQuadCurve(to: CGPoint(x: width, y: slantStopY + cornerRadius), controlPoint: CGPoint(x: width, y: slantStopY))  // 둥글게 변환
-        
-        // 우측 세로선
-        path.addLine(to: CGPoint(x: width, y: height - cornerRadius))
-        path.addQuadCurve(to: CGPoint(x: width - cornerRadius, y: height), controlPoint: CGPoint(x: width, y: height))
-        
-        // 하단 직선
-        path.addLine(to: CGPoint(x: cornerRadius, y: height))
-        path.addQuadCurve(to: CGPoint(x: 0, y: height - cornerRadius), controlPoint: CGPoint(x: 0, y: height))
-        
-        path.close()
-        
-        let shapeLayer = CAShapeLayer()
-        shapeLayer.path = path.cgPath
-        layer.mask = shapeLayer
-    }
 
     // MARK: - Cell UI
     private func setupUI() {
-        contentView.addSubviews(temperatureLabel, timeLabel, weatherIcon, locationLabel)
+        contentView.addSubviews(customView, weatherIcon)
+        customView.addSubviews(temperatureLabel, tempStackView, locationLabel, timeLabel, conditionLabel)
+        
+        tempStackView.addArrangedSubviews(tempMaxLabel, tempMinLabel)
     }
     
     private func setupConstraints() {
+        customView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        
         temperatureLabel.snp.makeConstraints {
             $0.top.leading.equalToSuperview().inset(16)
+            $0.width.equalTo(80)
+        }
+        
+        tempStackView.snp.makeConstraints {
+            $0.leading.equalTo(temperatureLabel.snp.trailing)
+            $0.lastBaseline.equalTo(temperatureLabel.snp.lastBaseline)
         }
         
         locationLabel.snp.makeConstraints {
@@ -119,23 +103,29 @@ class SavedLocationCell: UICollectionViewCell {
             $0.leading.equalToSuperview().inset(16)
         }
         
-        weatherIcon.snp.makeConstraints {
-            $0.trailing.equalToSuperview().inset(16)
-            $0.top.equalToSuperview().inset(16)
-            $0.size.equalTo(CGSize(width: 60, height: 60))
-        }
-        
         timeLabel.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(16)
             $0.bottom.equalToSuperview().inset(8)
         }
+        
+        conditionLabel.snp.makeConstraints {
+            $0.bottom.equalTo(timeLabel)
+             $0.leading.centerX.equalTo(weatherIcon)
+        }
+        
+        weatherIcon.snp.makeConstraints {
+            $0.top.equalToSuperview()
+            $0.trailing.equalToSuperview().inset(8)
+            $0.size.equalTo(CGSize(width: 80, height: 80))
+        }
     }
     
+    // MARK: - Configure
     func configure(location: String) {
         temperatureLabel.text = "13°"
         locationLabel.text = location
         timeLabel.text = "time or My Location"
         weatherIcon.image = UIImage(systemName: "sun.max.fill")
-        
+        conditionLabel.text = "sunny"
     }
 }
