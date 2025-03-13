@@ -16,7 +16,26 @@ class SavedLocationCell: UICollectionViewCell {
     private let temperatureLabel = UILabel().then {
         $0.font = Gabarito.semibold.of(size: 48)
         $0.textColor = .white
+        $0.text = "°"
         $0.textAlignment = .left
+    }
+    
+    private let tempMinLabel = UILabel().then {
+        $0.textColor = .white
+        $0.text = "L: --°"
+        $0.font = Gabarito.regular.of(size: 14)
+    }
+    
+    private let tempMaxLabel = UILabel().then {
+        $0.textColor = .white
+        $0.text = "H: --°"
+        $0.font = Gabarito.regular.of(size: 14)
+    }
+    
+    private let tempStackView = UIStackView().then {
+        $0.axis = .horizontal
+        $0.spacing = 8
+        $0.distribution = .fillEqually
     }
     
     private let locationLabel = UILabel().then {
@@ -34,10 +53,16 @@ class SavedLocationCell: UICollectionViewCell {
     private let weatherIcon = UIImageView().then {
         $0.contentMode = .scaleAspectFit
         $0.tintColor = .white
+        $0.clipsToBounds = false
     }
     
-    private let conditionLabel = UILabel()
-    private let tempStackView = UIStackView()
+    private let conditionLabel = UILabel().then {
+        $0.font = Gabarito.regular.of(size: 14)
+        $0.text = "--"
+        $0.textColor = .white
+        $0.textAlignment = .center
+    }
+    
     private let gradientLayer = CAGradientLayer()
     
     override init(frame: CGRect) {
@@ -49,6 +74,46 @@ class SavedLocationCell: UICollectionViewCell {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    // MARK: - Cell UI
+    private func setupUI() {
+        contentView.addSubviews(temperatureLabel, tempStackView, timeLabel, locationLabel, conditionLabel, weatherIcon)
+        
+        tempStackView.addArrangedSubviews(tempMaxLabel, tempMinLabel)
+    }
+    
+    private func setupConstraints() {
+        temperatureLabel.snp.makeConstraints {
+            $0.top.leading.equalToSuperview().inset(16)
+            $0.width.equalTo(80)
+        }
+        
+        tempStackView.snp.makeConstraints {
+            $0.leading.equalTo(temperatureLabel.snp.trailing)
+            $0.lastBaseline.equalTo(temperatureLabel.snp.lastBaseline)
+        }
+        
+        locationLabel.snp.makeConstraints {
+            $0.bottom.equalTo(timeLabel.snp.top)
+            $0.leading.equalToSuperview().inset(16)
+        }
+        
+        timeLabel.snp.makeConstraints {
+            $0.leading.equalToSuperview().inset(16)
+            $0.bottom.equalToSuperview().inset(8)
+        }
+        
+        conditionLabel.snp.makeConstraints {
+            $0.leading.centerX.equalTo(weatherIcon)
+            $0.bottom.equalTo(timeLabel)
+        }
+        
+        weatherIcon.snp.makeConstraints {
+            $0.top.equalToSuperview()
+            $0.trailing.equalToSuperview().inset(16)
+            $0.size.equalTo(CGSize(width: 70, height: 70))
+        }
     }
     
     // MARK: - 배경 그라데이션
@@ -62,7 +127,6 @@ class SavedLocationCell: UICollectionViewCell {
         gradientLayer.endPoint = CGPoint(x: 1, y: 0.5)
         layer.insertSublayer(gradientLayer, at: 0)
     }
-    
     
     // MARK: - 비대칭 카드 레이아웃
     override func layoutSubviews() {
@@ -103,39 +167,13 @@ class SavedLocationCell: UICollectionViewCell {
         shapeLayer.path = path.cgPath
         layer.mask = shapeLayer
     }
-
-    // MARK: - Cell UI
-    private func setupUI() {
-        contentView.addSubviews(temperatureLabel, timeLabel, weatherIcon, locationLabel)
-    }
     
-    private func setupConstraints() {
-        temperatureLabel.snp.makeConstraints {
-            $0.top.leading.equalToSuperview().inset(16)
-        }
-        
-        locationLabel.snp.makeConstraints {
-            $0.bottom.equalTo(timeLabel.snp.top)
-            $0.leading.equalToSuperview().inset(16)
-        }
-        
-        weatherIcon.snp.makeConstraints {
-            $0.trailing.equalToSuperview().inset(16)
-            $0.top.equalToSuperview().inset(16)
-            $0.size.equalTo(CGSize(width: 60, height: 60))
-        }
-        
-        timeLabel.snp.makeConstraints {
-            $0.leading.equalToSuperview().inset(16)
-            $0.bottom.equalToSuperview().inset(8)
-        }
-    }
-    
+    // MARK: - Configure
     func configure(location: String) {
         temperatureLabel.text = "13°"
         locationLabel.text = location
         timeLabel.text = "time or My Location"
         weatherIcon.image = UIImage(systemName: "sun.max.fill")
-        
+        conditionLabel.text = "sunny"
     }
 }
