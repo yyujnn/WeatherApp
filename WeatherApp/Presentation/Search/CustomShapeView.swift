@@ -44,14 +44,14 @@ class CustomShapeView: UIView {
         let height = bounds.height
         let path = UIBezierPath()
         let cornerRadius: CGFloat = 22
-        let slantHeight: CGFloat = 30
+        let topLeftSlantWidth: CGFloat = 30
 
         // 우측 기울기 조정
         let slantStopY: CGFloat = height * 0.4
         
         // 왼쪽 상단 둥근 모서리
         path.move(to: CGPoint(x: 0, y: cornerRadius))
-        path.addQuadCurve(to: CGPoint(x: slantHeight, y: 0), controlPoint: CGPoint.zero)
+        path.addQuadCurve(to: CGPoint(x: topLeftSlantWidth, y: 0), controlPoint: CGPoint.zero)
         
         // 기울어진 우측 상단
         path.addLine(to: CGPoint(x: width - cornerRadius, y: slantStopY))
