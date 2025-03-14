@@ -9,25 +9,32 @@ import UIKit
 import SnapKit
 import Then
 
-class SearchViewController: UIViewController {
+class SearchViewController: UIViewController, UISearchBarDelegate {
     
-    private var data = ["seoul", "incheon"]
-    private var filteredData: [String] = []
+    private var savedLocations: [String] = ["Seoul", "Incheon"] // 기존 저장된 위치
+    
+    private var savedResults = ["Seoul", "New York", "Tokyo"]
+    private var searchResults: [String] = [] // 검색 결과 리스트
+    // API 연동 전, 더미 데이터로 검색 필터링
+    let allCities = ["Seoul", "Incheon", "Busan", "Daegu", "Daejeon", "Gwangju", "Ulsan"]
     
     private let searchController = UISearchController(searchResultsController: nil)
     private var collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+    private var tableView = UITableView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         setupSearchController()
         setupCollectionView()
+        setupTableView()
     }
     
     private func setupUI() {
         view.backgroundColor = .sunnyBackground
     }
     
+    // MARK: - CollectionView 추가된 위치 표시
     private func setupCollectionView() {
         let layout = UICollectionViewFlowLayout()
         layout.itemSize = CGSize(width: view.frame.width - 32, height: 130)
@@ -49,53 +56,114 @@ class SearchViewController: UIViewController {
         }
     }
     
+    // MARK: - TableView 검색 결과 표시
+    private func setupTableView() {
+        tableView = UITableView(frame: .zero, style: .plain)
+        tableView.backgroundColor = .cloudyPoint1
+        tableView.isHidden = true
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.register(SearchResultCell.self, forCellReuseIdentifier: SearchResultCell.identifier)
+        
+        view.addSubview(tableView)
+        tableView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            $0.leading.trailing.bottom.equalToSuperview()
+        }
+    }
+    
+    // MARK: - SearchController 설정
     private func setupSearchController() {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "Search for a city"
         searchController.searchBar.tintColor = .sunnyFont
+        searchController.searchBar.delegate = self
         navigationItem.searchController = searchController
         navigationItem.hidesSearchBarWhenScrolling = false
     }
+    
+    // MARK: - UISearchBarDelegate (검색창 상태)
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        tableView.isHidden = false
+        collectionView.isHidden = true
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        tableView.isHidden = true
+        collectionView.isHidden = false
+    }
 }
+// MARK: - UISearchResultsUpdating
+extension SearchViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        guard let query = searchController.searchBar.text?.lowercased(), !query.isEmpty else {
+            searchResults.removeAll()
+            tableView.reloadData()
+            return
+        }
+        
+        searchResults = allCities.filter { $0.lowercased().contains(query) }
+        tableView.reloadData()
+    }
+}
+// MARK: - 검색 여부 확인
+extension SearchViewController {
+    var isFiltering: Bool {
+        return searchController.isActive && !(searchController.searchBar.text?.isEmpty ?? true)
+    }
+}
+// MARK: - UITableView
+extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return isFiltering ? searchResults.count : savedResults.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: SearchResultCell.identifier, for: indexPath) as? SearchResultCell else { return UITableViewCell() }
+        
+        let text = isFiltering ? searchResults[indexPath.row] : savedResults[indexPath.row]
+        
+        cell.configure(with: text)
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        // 선택한 도시를 저장된 위치에 추가
+        print("\(searchResults[indexPath.row]) 선택")
+        
+        // TODO: Alert
+        let selectedCity = searchResults[indexPath.row]
 
+        // 선택한 도시를 저장된 위치에 추가
+        if !savedLocations.contains(selectedCity) {
+            savedLocations.append(selectedCity)
+            collectionView.reloadData()
+        }
+
+        searchController.searchBar.text = ""
+        searchController.isActive = false
+        tableView.isHidden = true
+        collectionView.isHidden = false // 검색 후 컬렉션뷰 보이기
+    }
+}
+// MARK: - UICollectionView
 extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return isFiltering ? filteredData.count : data.count
+        return savedLocations.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SavedLocationCell.identifier, for: indexPath) as? SavedLocationCell else { return UICollectionViewCell() }
         
-        let text = isFiltering ? filteredData[indexPath.row] : data[indexPath.row]
+        let text = savedLocations[indexPath.row]
         cell.configure(location: text)
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let selectedItem = isFiltering ? filteredData[indexPath.row] : data[indexPath.row]
+        let selectedItem = savedLocations[indexPath.row]
         print("선택한 항목: \(selectedItem)")
-    }
-}
-
-// MARK: - UISearchResultsUpdating
-extension SearchViewController: UISearchResultsUpdating {
-    func updateSearchResults(for searchController: UISearchController) {
-        guard let searchText = searchController.searchBar.text, !searchText.isEmpty else {
-            filteredData = []
-            collectionView.reloadData()
-            return
-        }
-        
-        filteredData = data.filter { $0.lowercased().contains(searchText.lowercased()) }
-        collectionView.reloadData()
-    }
-}
-
-// MARK: - 검색 여부 확인
-extension SearchViewController {
-    var isFiltering: Bool {
-        return searchController.isActive && !(searchController.searchBar.text?.isEmpty ?? true)
     }
 }
