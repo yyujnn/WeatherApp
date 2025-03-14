@@ -172,7 +172,7 @@ class WeatherViewController: UIViewController {
             .store(in: &cancellables)
         
         viewModel.$weatherCondition
-            .compactMap { $0 } // nil 제거
+            .compactMap { $0 }
             .sink { [weak self] condition in
                 self?.applyTheme(for: condition)
                 self?.setupLottieAnimations()
@@ -403,7 +403,6 @@ extension WeatherViewController: UICollectionViewDataSource, UICollectionViewDel
 }
                                     
 extension WeatherViewController: UITableViewDelegate {
-    // 테이블 뷰 셀 높이 크기 지정
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 40
     }
