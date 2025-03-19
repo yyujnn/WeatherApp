@@ -157,18 +157,28 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
     // TODO: headerView
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // 선택한 도시를 저장된 위치에 추가
-        print("\(searchResults[indexPath.row]) 선택")
-        
-        // TODO: 화면 이동
-        let selectedCity = searchResults[indexPath.row]
-
-        // 선택한 도시를 저장된 위치에 추가
-        if !savedLocations.contains(selectedCity) {
-            savedLocations.append(selectedCity)
-            collectionView.reloadData()
+        if indexPath.section == 0 {
+            // 최근 검색어 셀
+            let selectedCity = recentSearches[indexPath.row]
+            print("\(selectedCity) 선택 (최근 검색어)")
+            
+            // 선택한 도시를 저장된 위치에 추가
+            if !savedLocations.contains(selectedCity) {
+                savedLocations.append(selectedCity)
+                collectionView.reloadData()
+            }
+        } else {
+            // 검색 결과 셀
+            let selectedCity = searchResults[indexPath.row]
+            print("\(selectedCity) 선택 (검색 결과)")
+            
+            // 선택한 도시를 저장된 위치에 추가
+            if !savedLocations.contains(selectedCity) {
+                savedLocations.append(selectedCity)
+                collectionView.reloadData()
+            }
         }
-
+        // TODO: WeatherPreviewVC 화면 이동
         searchController.searchBar.text = ""
         searchController.isActive = false
         tableView.isHidden = true
