@@ -73,6 +73,3 @@ class CustomShapeView: UIView {
         layer.mask = shapeLayer
     }
 }
-#Preview {
-    SearchViewController()
-}

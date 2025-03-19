@@ -13,7 +13,7 @@ class SearchViewController: UIViewController, UISearchBarDelegate {
     
     private var savedLocations: [String] = ["Seoul", "Incheon"] // 기존 저장된 위치
     
-    private var savedResults = ["Seoul", "New York", "Tokyo"]
+    private var recentSearches: [String] = [] // 최근 검색어
     private var searchResults: [String] = [] // 검색 결과 리스트
     // API 연동 전, 더미 데이터로 검색 필터링
     let allCities = ["Seoul", "Incheon", "Busan", "Daegu", "Daejeon", "Gwangju", "Ulsan"]
@@ -28,6 +28,7 @@ class SearchViewController: UIViewController, UISearchBarDelegate {
         setupSearchController()
         setupCollectionView()
         setupTableView()
+        loadRecentSearches()
     }
     
     private func setupUI() {
@@ -64,12 +65,19 @@ class SearchViewController: UIViewController, UISearchBarDelegate {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(SearchResultCell.self, forCellReuseIdentifier: SearchResultCell.identifier)
+        tableView.register(RecentSearchCell.self, forCellReuseIdentifier: RecentSearchCell.identifier)
         
         view.addSubview(tableView)
         tableView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             $0.leading.trailing.bottom.equalToSuperview()
         }
+    }
+    
+    private func loadRecentSearches() {
+        // TODO: Core Data에서 최근 검색어 불러오기
+        recentSearches = ["Seoul", "New York", "Tokyo"]
+        tableView.reloadData()
     }
     
     // MARK: - SearchController 설정
@@ -115,24 +123,44 @@ extension SearchViewController {
 }
 // MARK: - UITableView
 extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return isFiltering ? searchResults.count : savedResults.count
+        if section == 0 {
+            return isFiltering ? 0 : recentSearches.count // 최근 검색어
+        } else {
+            return isFiltering ? searchResults.count : 0 // 검색 결과
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: SearchResultCell.identifier, for: indexPath) as? SearchResultCell else { return UITableViewCell() }
-        
-        let text = isFiltering ? searchResults[indexPath.row] : savedResults[indexPath.row]
-        
-        cell.configure(with: text)
-        return cell
+        if indexPath.section == 0 {
+            // 최근 검색어 셀
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "RecentSearchCell", for: indexPath) as? RecentSearchCell else {
+                return UITableViewCell()
+            }
+            cell.configure(with: recentSearches[indexPath.row])
+            return cell
+        } else {
+            // 검색 결과 셀
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "SearchResultCell", for: indexPath) as? SearchResultCell else {
+                return UITableViewCell()
+            }
+            cell.configure(with: searchResults[indexPath.row])
+            return cell
+            
+        }
     }
+    
+    // TODO: headerView
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // 선택한 도시를 저장된 위치에 추가
         print("\(searchResults[indexPath.row]) 선택")
         
-        // TODO: Alert
+        // TODO: 화면 이동
         let selectedCity = searchResults[indexPath.row]
 
         // 선택한 도시를 저장된 위치에 추가
