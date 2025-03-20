@@ -11,7 +11,7 @@ import Then
 
 class SearchViewController: UIViewController, UISearchBarDelegate {
     
-    private var savedLocations: [String] = ["Seoul", "Incheon", "Busan", "Daegu", "Daejeon", "Gwangju", "Ulsan"]
+    private var savedLocations: [String] = ["Seoul", "Busan"]
     
     private var recentSearches: [String] = [] // 최근 검색어
     private var searchResults: [String] = [] // 검색 결과 리스트

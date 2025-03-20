@@ -116,6 +116,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F33B71522D8C0BBE00A49099 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				F33B71202D72F4CA00A49099 /* SavedLocationCell.swift */,
+				F33B714E2D8AA38400A49099 /* RecentSearchCell.swift */,
+				F33B71282D84305800A49099 /* SearchResultCell.swift */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
 		F359DD282C8EEBE900F51E40 = {
 			isa = PBXGroup;
 			children = (
@@ -170,7 +180,7 @@
 				F3F8EE292D59E31F00AFBF6B /* WeatherViewModel.swift */,
 				F359DD382C8EEBE900F51E40 /* WeatherViewController.swift */,
 				F36673E82CEB24F2008C2D42 /* TabBarViewController.swift */,
-				F3AB5A552D031A4A00A88985 /* Cell */,
+				F3AB5A552D031A4A00A88985 /* Cells */,
 			);
 			path = Weather;
 			sourceTree = "<group>";
@@ -200,10 +210,8 @@
 			isa = PBXGroup;
 			children = (
 				F36673EE2CEB2947008C2D42 /* SearchViewController.swift */,
-				F33B714E2D8AA38400A49099 /* RecentSearchCell.swift */,
-				F33B71282D84305800A49099 /* SearchResultCell.swift */,
-				F33B71202D72F4CA00A49099 /* SavedLocationCell.swift */,
 				F33B71222D82DD9C00A49099 /* CustomShapeView.swift */,
+				F33B71522D8C0BBE00A49099 /* Cells */,
 			);
 			path = Search;
 			sourceTree = "<group>";
@@ -241,13 +249,13 @@
 			path = LottieAnimation;
 			sourceTree = "<group>";
 		};
-		F3AB5A552D031A4A00A88985 /* Cell */ = {
+		F3AB5A552D031A4A00A88985 /* Cells */ = {
 			isa = PBXGroup;
 			children = (
 				F3AB5A562D031B8F00A88985 /* HourlyForecastCell.swift */,
 				F3742EE82CAFCE6000E062E0 /* DailyForecastCell.swift */,
 			);
-			path = Cell;
+			path = Cells;
 			sourceTree = "<group>";
 		};
 		F3AB5A5B2D05954F00A88985 /* Extension */ = {
