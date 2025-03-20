@@ -14,7 +14,7 @@ class WeatherViewModel {
     @Published var currentWeather: CurrentWeatherResult?
     @Published var weatherCondition: WeatherCondition?
     @Published var hourlyWeather: [HourlyWeather] = []
-    @Published var dailyWeather: [DailyWeather] = [] // 가공된 데이터 저장
+    @Published var dailyWeather: [DailyWeather] = []
     @Published var errorMessage: String?
     
     private var cancellables = Set<AnyCancellable>()
