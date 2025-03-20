@@ -141,7 +141,16 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: "RecentSearchCell", for: indexPath) as? RecentSearchCell else {
                 return UITableViewCell()
             }
-            cell.configure(with: recentSearches[indexPath.row])
+            let location = recentSearches[indexPath.row]
+            cell.configure(with: location)
+            
+            cell.deleteAction = {
+                print("\(location) 삭제 (최근 검색)")
+                
+                // 임시 동작
+                self.recentSearches.remove(at: indexPath.row)
+                tableView.reloadData()
+            }
             return cell
         } else {
             // 검색 결과 셀
@@ -153,8 +162,6 @@ extension SearchViewController: UITableViewDataSource, UITableViewDelegate {
             
         }
     }
-    
-    // TODO: headerView
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 0 {

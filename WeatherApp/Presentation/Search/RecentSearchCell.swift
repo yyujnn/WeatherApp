@@ -27,6 +27,7 @@ class RecentSearchCell: UITableViewCell {
         $0.tintColor = .foggyPoint1
     }
 
+    // 클로저 타입 변수: 이 버튼이 눌렸을 때 실행될 코드
     var deleteAction: (() -> Void)?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
