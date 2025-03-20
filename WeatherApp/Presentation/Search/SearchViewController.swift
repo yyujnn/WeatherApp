@@ -11,7 +11,7 @@ import Then
 
 class SearchViewController: UIViewController, UISearchBarDelegate {
     
-    private var savedLocations: [String] = ["Seoul", "Incheon"] // 기존 저장된 위치
+    private var savedLocations: [String] = ["Seoul", "Incheon", "Busan", "Daegu", "Daejeon", "Gwangju", "Ulsan"]
     
     private var recentSearches: [String] = [] // 최근 검색어
     private var searchResults: [String] = [] // 검색 결과 리스트
@@ -54,6 +54,10 @@ class SearchViewController: UIViewController, UISearchBarDelegate {
             $0.leading.equalTo(view.snp.leading)
             $0.trailing.equalTo(view.snp.trailing)
             $0.bottom.equalTo(view.snp.bottom)
+        }
+        
+        if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
+            layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 16, right: 0)
         }
     }
     
