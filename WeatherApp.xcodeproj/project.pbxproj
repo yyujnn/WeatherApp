@@ -126,6 +126,13 @@
 			path = Cells;
 			sourceTree = "<group>";
 		};
+		F33B71532D8C0D6400A49099 /* Persistence */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Persistence;
+			sourceTree = "<group>";
+		};
 		F359DD282C8EEBE900F51E40 = {
 			isa = PBXGroup;
 			children = (
@@ -148,6 +155,7 @@
 				F36673E72CE5F363008C2D42 /* Application */,
 				F36673E62CE5F32D008C2D42 /* Resource */,
 				F36673E32CE5F2AD008C2D42 /* Model */,
+				F33B71532D8C0D6400A49099 /* Persistence */,
 				F3AB5A602D08578200A88985 /* Service */,
 				F36673E42CE5F2D1008C2D42 /* Presentation */,
 				F36673FD2CEB2FEC008C2D42 /* Utills */,
